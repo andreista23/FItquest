@@ -7,12 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Account\" />
     <Folder Include="Pages\Dashboard\" />
     <Folder Include="Pages\Activities\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Trainer\" />
     <Folder Include="Pages\Premium\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
   </ItemGroup>
 
 </Project>
