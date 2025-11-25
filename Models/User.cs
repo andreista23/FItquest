@@ -18,6 +18,8 @@ namespace FitQuest.Models
         [Required]
         public UserRole Role { get; set; } = UserRole.Standard;
 
+        public string? GoogleId { get; set; }
+
         public string? PasswordHash { get; set; }
 
     }

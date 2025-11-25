@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using FitQuest.Data;
 using FitQuest.Models;
-using FitQuest.Pages;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.Security.Claims;
@@ -23,36 +21,34 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services
     .AddAuthentication(options =>
     {
-        // Schema default de autentificare
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        // Schema folosită când dăm Challenge (de ex. la "Login cu Google")
         options.DefaultChallengeScheme = "Google";
     })
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";          // pagina ta de login clasic
+        options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         options.AccessDeniedPath = "/Account/AccessDenied";
     })
     .AddGoogle("Google", options =>
     {
-        var googleConfig = builder.Configuration.GetSection("Authentication:Google");
-        options.ClientId = googleConfig["ClientId"]!;
-        options.ClientSecret = googleConfig["ClientSecret"]!;
+        // ia din configuration (user-secrets + appsettings)
+        var section = builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = section["ClientId"]!;
+        options.ClientSecret = section["ClientSecret"]!;
 
-        // aici putem sincroniza user-ul cu baza de date
         options.Events.OnCreatingTicket = async context =>
         {
-            var db = context.HttpContext.RequestServices
-                        .GetRequiredService<ApplicationDbContext>();
+            // sincronziare user din Google în baza ta de date
+            var db = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
 
             var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
             var name = context.Principal?.FindFirst(ClaimTypes.Name)?.Value;
+            var googleId = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!string.IsNullOrEmpty(email))
             {
-                var user = await db.Users
-                    .FirstOrDefaultAsync(u => u.Email == email);
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user == null)
                 {
@@ -60,30 +56,30 @@ builder.Services
                     {
                         Email = email,
                         Name = string.IsNullOrWhiteSpace(name) ? email : name,
-                        Role = UserRole.Standard,   // default pentru cont creat prin Google
+                        GoogleId = googleId,
+                        Role = UserRole.Standard,
                         CreatedAt = DateTime.UtcNow
                     };
 
                     db.Users.Add(user);
                     await db.SaveChangesAsync();
                 }
+                else
+                {
+                    // dacă vrei, actualizezi info
+                    user.GoogleId ??= googleId;
+                    await db.SaveChangesAsync();
+                }
 
-                // dacă vrei, poți atașa aici și un claim custom cu rolul din DB
+                // adaugă claim de rol ca să meargă [Authorize(Roles="Admin")]
                 var identity = (ClaimsIdentity)context.Principal!.Identity!;
                 identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
             }
         };
     });
 
-var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
