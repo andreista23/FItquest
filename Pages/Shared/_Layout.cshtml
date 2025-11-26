@@ -3,45 +3,110 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FItquest</title>
+    <title>@ViewData["Title"] - FitQuest</title>
+
+    <!-- Bootstrap local -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/FItquest.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Fitquest.styles.css" asp-append-version="true" />
+
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+        .content-wrapper {
+            padding-top: 80px;
+        }
+    </style>
 </head>
+
 <body>
+    <!-- NAVBAR -->
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow fixed-top">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">FItquest</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                <!-- LOGO + BRAND -->
+                <a class="navbar-brand" asp-page="/Index">
+                    <img src="/img/logo.png" width="40" class="me-2" />
+                    FitQuest
+                </a>
+
+                <!-- MOBILE -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <!-- MENU -->
+                <div class="collapse navbar-collapse" id="mainNavbar">
+
+                    <!-- LEFT -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link" asp-page="/Dashboard/Index">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                            <a class="nav-link" asp-page="/Activities/Index">Activities</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Quests/Index">Quests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Premium/Index">Premium</a>
                         </li>
                     </ul>
+
+                    <!-- RIGHT -->
+                    <ul class="navbar-nav ms-auto">
+
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item me-3">
+                                <span class="navbar-text text-light">
+                                    Hello, @User.Identity.Name!
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-page="/Account/Logout">
+                                    <button class="btn btn-outline-warning btn-sm">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-outline-light me-2" asp-page="/Account/Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-warning" asp-page="/Account/Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <!-- MAIN CONTENT -->
+    <div class="container content-wrapper">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FItquest - <a asp-area="" asp-page="/Privacy">Privacy</a>
+    <!-- FOOTER -->
+    <footer class="border-top footer text-muted bg-dark text-light py-3 mt-5">
+        <div class="container text-center">
+            © 2025 - FitQuest
         </div>
     </footer>
 
+    <!-- SCRIPTS -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
