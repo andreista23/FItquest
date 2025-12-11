@@ -1,9 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BCrypt.Net;
+using FitQuest.Data;
+using FitQuest.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 public class RegisterModel : PageModel
 {
+    private readonly ApplicationDbContext _db;
+
+    public RegisterModel(ApplicationDbContext db)
+    {
+        _db = db;
+    }
+
     [BindProperty]
     public RegisterInput Input { get; set; }
 
@@ -11,17 +23,15 @@ public class RegisterModel : PageModel
 
     public class RegisterInput
     {
-        public string Username { get; set; }
+        public string Username { get; set; } // maps to Name
         public string Email { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
     }
 
-    public void OnGet()
-    {
-    }
+    public void OnGet() { }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
             return Page();
@@ -32,24 +42,43 @@ public class RegisterModel : PageModel
             return Page();
         }
 
-        // TODO: verifică dacă email există în DB
-        // var exists = _db.Users.Any(u => u.Email == Input.Email);
-
-        bool exists = false; // scoți după ce ai DB
-
+        // check if email exists
+        var exists = await _db.Users.AnyAsync(u => u.Email == Input.Email);
         if (exists)
         {
             ErrorMessage = "Email already in use.";
             return Page();
         }
 
+        // hash password
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(Input.Password);
 
-        // TODO: salvează user în DB
-        // var user = new User { Email = Input.Email, Username = Input.Username, PasswordHash = passwordHash };
-        // _db.Users.Add(user);
-        // _db.SaveChanges();
+        var user = new User
+        {
+            Email = Input.Email,
+            Name = Input.Username,
+            PasswordHash = passwordHash,
+            Role = UserRole.Standard,
+            CreatedAt = DateTime.UtcNow
+        };
 
-        return RedirectToPage("/Account/Login");
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        // AUTO LOGIN
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+        return RedirectToPage("/Index");
     }
 }

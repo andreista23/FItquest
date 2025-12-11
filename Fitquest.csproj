@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Dashboard\" />
     <Folder Include="Pages\Activities\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Trainer\" />

@@ -1,0 +1,42 @@
+﻿@page
+@model FitQuest.Pages.Dashboard.IndexModel
+@using FitQuest.Models
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row mb-4">
+
+    <!-- XP Total -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">XP Total</h5>
+                <p class="display-6 fw-bold text-primary">@Model.TotalXP</p>
+
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         style="width:@Model.LevelProgressPercent%">
+                    </div>
+                </div>
+                <small class="text-muted">Progres nivel</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Level</h5>
+                <p class="display-6 fw-bold">@Model.Level</p>
+                <p class="text-muted">Se calculează la fiecare 100 XP</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activități -->
+    <div class="col-md-4 mb-3">
