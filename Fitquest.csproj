@@ -19,9 +19,11 @@
 
   <ItemGroup>
     <Folder Include="Pages\Dashboard\" />
+    <Folder Include="Pages\Activities\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Trainer\" />
     <Folder Include="Pages\Premium\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
   <ItemGroup>

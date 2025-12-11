@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string currentPage = ViewContext.RouteData.Values["page"]?.ToString()?.ToLower() ?? "";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -14,13 +18,23 @@
         body {
             background-color: #f5f7fa;
         }
+
         .navbar-brand {
             font-weight: 700;
             font-size: 1.4rem;
         }
+        /* Asigură spațiu sub navbar-ul fix */
         .content-wrapper {
-            padding-top: 80px;
+            padding-top: 90px;
         }
+        /* Efect navbar scrolled */
+        .navbar {
+            transition: background-color 0.3s ease;
+        }
+
+            .navbar.scrolled {
+                background-color: #202020 !important;
+            }
     </style>
 </head>
 
@@ -31,8 +45,8 @@
             <div class="container">
 
                 <!-- LOGO + BRAND -->
-                <a class="navbar-brand" asp-page="/Index">
-                    <img src="/img/logo.png" width="40" class="me-2" />
+                <a class="navbar-brand d-flex align-items-center" asp-page="/Index">
+                    <img src="~/images/fitquest_logo.png" width="40" class="me-2" alt="FitQuest logo" />
                     FitQuest
                 </a>
 
@@ -48,7 +62,8 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Dashboard/Index">Dashboard</a>
+                            <a class="nav-link @(currentPage.Contains("/dashboard") ? "active" : "")"
+                               asp-page="/Dashboard/Index">Dashboard</a>
                         </li>
 
                         <!-- ACTIVITIES DROPDOWN -->
@@ -69,11 +84,13 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Quests/Index">Quests</a>
+                            <a class="nav-link @(currentPage.Contains("/quests") ? "active" : "")"
+                               asp-page="/Quests/Index">Quests</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Premium/Index">Premium</a>
+                            <a class="nav-link @(currentPage.Contains("/premium") ? "active" : "")"
+                               asp-page="/Premium/Index">Premium</a>
                         </li>
 
                     </ul>
@@ -84,13 +101,14 @@
 
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item me-3">
+                            <li class="nav-item me-3 d-flex align-items-center">
                                 <span class="navbar-text text-light">
                                     Hello, @User.Identity.Name!
                                 </span>
                             </li>
+
                             <li class="nav-item">
-                                <form method="post" asp-page="/Account/Logout">
+                                <form method="post" asp-page="/Account/Logout" class="d-inline">
                                     <button class="btn btn-outline-warning btn-sm">Logout</button>
                                 </form>
                             </li>
@@ -104,6 +122,7 @@
                                 <a class="btn btn-warning" asp-page="/Account/Register">Register</a>
                             </li>
                         }
+
                     </ul>
 
                 </div>
@@ -129,6 +148,15 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Navbar scroll effect
+        document.addEventListener("scroll", () => {
+            const nav = document.querySelector(".navbar");
+            if (window.scrollY > 10) nav.classList.add("scrolled");
+            else nav.classList.remove("scrolled");
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
