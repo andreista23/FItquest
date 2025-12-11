@@ -39,7 +39,7 @@ builder.Services
 
         options.Events.OnCreatingTicket = async context =>
         {
-            // sincronziare user din Google în baza ta de date
+            // sincronizare user din Google în baza ta de date
             var db = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
 
             var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
@@ -71,12 +71,36 @@ builder.Services
                     await db.SaveChangesAsync();
                 }
 
-                // adaugă claim de rol ca să meargă [Authorize(Roles="Admin")]
+                // 👉 aici rescriem claims ca să folosim Id-ul intern, nu googleId-ul
                 var identity = (ClaimsIdentity)context.Principal!.Identity!;
+
+                // ștergem NameIdentifier vechi (googleId)
+                var existingNameId = identity.FindFirst(ClaimTypes.NameIdentifier);
+                if (existingNameId != null)
+                {
+                    identity.RemoveClaim(existingNameId);
+                }
+
+                // punem NameIdentifier = ID-ul din baza ta de date
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+
+                // păstrăm și googleId-ul ca claim separat, dacă vrei
+                if (!string.IsNullOrEmpty(googleId))
+                {
+                    identity.AddClaim(new Claim("GoogleId", googleId));
+                }
+
+                // ne asigurăm că avem email și rol
+                if (identity.FindFirst(ClaimTypes.Email) == null)
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+                }
+
                 identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
             }
         };
     });
+
 
 
 var app = builder.Build();

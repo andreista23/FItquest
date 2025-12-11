@@ -46,19 +46,38 @@
 
                     <!-- LEFT -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                         <li class="nav-item">
                             <a class="nav-link" asp-page="/Dashboard/Index">Dashboard</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Activities/Index">Activities</a>
+
+                        <!-- ACTIVITIES DROPDOWN -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="activitiesDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                Activities
+                            </a>
+
+                            <ul class="dropdown-menu" aria-labelledby="activitiesDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Activities/Index">View Activities</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Activities/Add">Add Activity</a>
+                                </li>
+                            </ul>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" asp-page="/Quests/Index">Quests</a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" asp-page="/Premium/Index">Premium</a>
                         </li>
+
                     </ul>
+
 
                     <!-- RIGHT -->
                     <ul class="navbar-nav ms-auto">

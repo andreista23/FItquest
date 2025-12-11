@@ -62,15 +62,21 @@ namespace FitQuest.Pages.Account
                 ErrorMessage = "Parolă incorectă!";
                 return Page();
             }
-
-            // generăm cookie de autentificare
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
+                        // AICI: NameIdentifier = ID-ul din baza ta de date (int)
+                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+
+                        // poți păstra și un claim custom, dar nu e obligatoriu
+                        // new Claim("UserId", user.Id.ToString()),
+
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Name, user.Name),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+        };
+
+
+
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

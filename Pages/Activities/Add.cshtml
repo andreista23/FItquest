@@ -1,0 +1,108 @@
+﻿@page
+@model FitQuest.Pages.Activities.AddModel
+
+@{
+    ViewData["Title"] = "Adaugă activitate";
+}
+
+<h2 class="mb-4">Adaugă o activitate</h2>
+
+<form method="post" enctype="multipart/form-data" id="activityForm">
+    <div class="mb-3">
+        <label asp-for="Input.Type" class="form-label"></label>
+        <input asp-for="Input.Type" class="form-control" />
+        <span asp-validation-for="Input.Type" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.Duration" class="form-label"></label>
+        <input asp-for="Input.Duration" class="form-control" />
+        <span asp-validation-for="Input.Duration" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Input.Date" class="form-label"></label>
+        <input asp-for="Input.Date" class="form-control" />
+        <span asp-validation-for="Input.Date" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EvidenceFile" class="form-label">
+            Dovadă video (opțional, max 30 MB)
+        </label>
+        <input asp-for="EvidenceFile"
+               class="form-control"
+               type="file"
+               accept="video/*"
+               id="evidenceFile" />
+        <span asp-validation-for="EvidenceFile" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">
+        Salvează activitatea
+    </button>
+</form>
+
+@if (ViewData["Debug"] != null)
+{
+    <div class="alert alert-info mt-3">
+        DEBUG: @ViewData["Debug"]
+    </div>
+}
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            const maxSizeBytes = 30 * 1024 * 1024; // 30 MB
+            const fileInput = document.getElementById("evidenceFile");
+            const form = document.getElementById("activityForm");
+
+            function clearFieldAndShow(msg) {
+                // ștergem fișierul selectat
+                fileInput.value = "";
+                // afișăm mesaj frumos (poți folosi și alt mecanism)
+                alert(msg);
+            }
+
+            // verificare imediat după ce userul alege fișierul
+            fileInput.addEventListener("change", function () {
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                // tipul de fișier
+                if (!file.type.startsWith("video/")) {
+                    clearFieldAndShow("Fișierul trebuie să fie de tip video.");
+                    return;
+                }
+
+                // dimensiune maximă
+                if (file.size > maxSizeBytes) {
+                    clearFieldAndShow("Fișierul nu poate depăși 30 MB.");
+                    return;
+                }
+            });
+
+            // verificare de siguranță la submit (în caz că se schimbă ceva)
+            form.addEventListener("submit", function (e) {
+                const file = fileInput.files[0];
+                if (!file) return; // optional -> fără fișier e ok
+
+                if (!file.type.startsWith("video/")) {
+                    e.preventDefault();
+                    clearFieldAndShow("Fișierul trebuie să fie de tip video.");
+                    return;
+                }
+
+                if (file.size > maxSizeBytes) {
+                    e.preventDefault();
+                    clearFieldAndShow("Fișierul nu poate depăși 30 MB.");
+                    return;
+                }
+            });
+        })();
+    </script>
+}
+
