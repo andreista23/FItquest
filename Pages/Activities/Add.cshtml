@@ -5,104 +5,130 @@
     ViewData["Title"] = "Adaugă activitate";
 }
 
-<h2 class="mb-4">Adaugă o activitate</h2>
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
 
-<form method="post" enctype="multipart/form-data" id="activityForm">
-    <div class="mb-3">
-        <label asp-for="Input.Type" class="form-label"></label>
-        <input asp-for="Input.Type" class="form-control" />
-        <span asp-validation-for="Input.Type" class="text-danger"></span>
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- HEADER -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold">🔥 Adaugă o activitate</h3>
+                    <p class="text-muted mb-0">
+                        Fiecare activitate te aduce mai aproape de următorul nivel
+                    </p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" id="activityForm">
+
+                    <!-- TIP -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Type" class="form-label fw-semibold">
+                            🏋️ Tip activitate
+                        </label>
+                        <input asp-for="Input.Type"
+                               class="form-control form-control-lg"
+                               placeholder="Ex: Alergare, Forță, Cardio" />
+                        <span asp-validation-for="Input.Type" class="text-danger"></span>
+                    </div>
+
+                    <!-- DURATA -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Duration" class="form-label fw-semibold">
+                            ⏱️ Durată (minute)
+                        </label>
+                        <input asp-for="Input.Duration"
+                               class="form-control form-control-lg"
+                               placeholder="Ex: 45" />
+                        <span asp-validation-for="Input.Duration" class="text-danger"></span>
+                    </div>
+
+                    <!-- DATA -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Date" class="form-label fw-semibold">
+                            📅 Data activității
+                        </label>
+                        <input asp-for="Input.Date"
+                               class="form-control form-control-lg" />
+                        <span asp-validation-for="Input.Date" class="text-danger"></span>
+                    </div>
+
+                    <!-- VIDEO -->
+                    <div class="mb-4">
+                        <label asp-for="EvidenceFile" class="form-label fw-semibold">
+                            🎥 Dovadă video (opțional)
+                        </label>
+                        <input asp-for="EvidenceFile"
+                               class="form-control"
+                               type="file"
+                               accept="video/*"
+                               id="evidenceFile" />
+                        <div class="form-text">
+                            Video • max 30 MB • ajută la validarea mai rapidă
+                        </div>
+                        <span asp-validation-for="EvidenceFile" class="text-danger"></span>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="d-grid">
+                        <button type="submit"
+                                class="btn btn-success btn-lg shadow-sm">
+                            ✅ Salvează activitatea
+                        </button>
+                    </div>
+
+                </form>
+
+                @if (ViewData["Debug"] != null)
+                {
+                    <div class="alert alert-info mt-4">
+                        DEBUG: @ViewData["Debug"]
+                    </div>
+                }
+
+            </div>
+        </div>
+
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Input.Duration" class="form-label"></label>
-        <input asp-for="Input.Duration" class="form-control" />
-        <span asp-validation-for="Input.Duration" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Input.Date" class="form-label"></label>
-        <input asp-for="Input.Date" class="form-control" />
-        <span asp-validation-for="Input.Date" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="EvidenceFile" class="form-label">
-            Dovadă video (opțional, max 30 MB)
-        </label>
-        <input asp-for="EvidenceFile"
-               class="form-control"
-               type="file"
-               accept="video/*"
-               id="evidenceFile" />
-        <span asp-validation-for="EvidenceFile" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success w-100">
-        Salvează activitatea
-    </button>
-</form>
-
-@if (ViewData["Debug"] != null)
-{
-    <div class="alert alert-info mt-3">
-        DEBUG: @ViewData["Debug"]
-    </div>
-}
-
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
         (function () {
-            const maxSizeBytes = 30 * 1024 * 1024; // 30 MB
+            const maxSizeBytes = 30 * 1024 * 1024;
             const fileInput = document.getElementById("evidenceFile");
             const form = document.getElementById("activityForm");
 
-            function clearFieldAndShow(msg) {
-                // ștergem fișierul selectat
+            function showError(msg) {
                 fileInput.value = "";
-                // afișăm mesaj frumos (poți folosi și alt mecanism)
                 alert(msg);
             }
 
-            // verificare imediat după ce userul alege fișierul
             fileInput.addEventListener("change", function () {
                 const file = fileInput.files[0];
                 if (!file) return;
 
-                // tipul de fișier
                 if (!file.type.startsWith("video/")) {
-                    clearFieldAndShow("Fișierul trebuie să fie de tip video.");
+                    showError("Fișierul trebuie să fie video.");
                     return;
                 }
 
-                // dimensiune maximă
                 if (file.size > maxSizeBytes) {
-                    clearFieldAndShow("Fișierul nu poate depăși 30 MB.");
-                    return;
+                    showError("Fișierul nu poate depăși 30 MB.");
                 }
             });
 
-            // verificare de siguranță la submit (în caz că se schimbă ceva)
             form.addEventListener("submit", function (e) {
                 const file = fileInput.files[0];
-                if (!file) return; // optional -> fără fișier e ok
+                if (!file) return;
 
-                if (!file.type.startsWith("video/")) {
+                if (!file.type.startsWith("video/") || file.size > maxSizeBytes) {
                     e.preventDefault();
-                    clearFieldAndShow("Fișierul trebuie să fie de tip video.");
-                    return;
-                }
-
-                if (file.size > maxSizeBytes) {
-                    e.preventDefault();
-                    clearFieldAndShow("Fișierul nu poate depăși 30 MB.");
-                    return;
+                    showError("Fișier video invalid.");
                 }
             });
         })();
     </script>
 }
-

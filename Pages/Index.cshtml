@@ -1,10 +1,91 @@
 ﻿@page
-@model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+
+    <!-- HERO -->
+    <div class="row align-items-center my-5">
+        <div class="col-md-6">
+            <h1 class="display-5 fw-bold">
+                Transformă fitness-ul într-o <span class="text-warning">aventură</span>
+            </h1>
+            <p class="lead text-muted mt-3">
+                FitQuest te ajută să îți urmărești activitățile, să câștigi XP,
+                să urci în nivel și să rămâi motivat în fiecare zi.
+            </p>
+
+            <div class="mt-4">
+                <a asp-page="/Account/Register" class="btn btn-warning btn-lg me-3">
+                    🚀 Începe acum
+                </a>
+                <a asp-page="/Dashboard/Index" class="btn btn-outline-secondary btn-lg">
+                    Vezi dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 text-center mt-4 mt-md-0">
+            <img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74"
+                 class="img-fluid rounded shadow"
+                 alt="Fitness motivation">
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="row text-center my-5">
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3>📊 Progres clar</h3>
+                    <p class="text-muted">
+                        Vezi activitățile tale, XP-ul acumulat și nivelul atins
+                        într-un dashboard intuitiv.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3>🏆 Gamificare</h3>
+                    <p class="text-muted">
+                        Câștigă XP, insigne și completează quest-uri
+                        pentru a rămâne motivat.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3>🎯 Obiective</h3>
+                    <p class="text-muted">
+                        Setează obiective, urmărește progresul și
+                        transformă fitness-ul într-un obicei.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CTA FINAL -->
+    <div class="card bg-dark text-light shadow my-5">
+        <div class="card-body text-center py-5">
+            <h2 class="mb-3">Ești gata să începi?</h2>
+            <p class="mb-4 text-muted">
+                Creează-ți un cont și începe să îți construiești
+                cea mai bună versiune.
+            </p>
+            <a asp-page="/Account/Register" class="btn btn-warning btn-lg">
+                Creează cont
+            </a>
+        </div>
+    </div>
+
 </div>
