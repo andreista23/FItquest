@@ -32,10 +32,16 @@ builder.Services
     })
     .AddGoogle("Google", options =>
     {
-        // ia din configuration (user-secrets + appsettings)
+       
         var section = builder.Configuration.GetSection("Authentication:Google");
         options.ClientId = section["ClientId"]!;
         options.ClientSecret = section["ClientSecret"]!;
+
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax; // sau None dacă ai probleme
+        options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+
+        // (opțional) vezi ce primești de la Google
+        options.SaveTokens = true;
 
         options.Events.OnCreatingTicket = async context =>
         {

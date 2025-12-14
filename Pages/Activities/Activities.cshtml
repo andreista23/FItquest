@@ -1,0 +1,75 @@
+﻿@page
+@model FitQuest.Pages.Activities.IndexModel
+
+@{
+    ViewData["Title"] = "Activities";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Activities</h2>
+
+    <a class="btn btn-success" asp-page="/Activities/Add">
+        + Add Activity
+    </a>
+</div>
+
+@if (Model.Activities.Count == 0)
+{
+    <div class="alert alert-info">
+        Nu ai încă nicio activitate. Apasă pe <b>Add Activity</b> ca să adaugi una.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Duration (min)</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Evidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.Activities)
+                {
+                    var evidence = a.Evidences?.OrderByDescending(e => e.UploadedAt).FirstOrDefault();
+
+                    <tr>
+                        <td>@a.Type</td>
+                        <td>@a.Duration</td>
+                        <td>@a.Date.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (a.Status == FitQuest.Models.ActivityStatus.Pending)
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (a.Status == FitQuest.Models.ActivityStatus.Approved)
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                        </td>
+                        <td>
+                            @if (evidence != null)
+                            {
+                                <a class="btn btn-sm btn-outline-primary" href="@evidence.FilePath" target="_blank">
+                                    View video
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

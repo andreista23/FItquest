@@ -1,14 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using FitQuest.Data;
+﻿using FitQuest.Data;
 using FitQuest.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace FitQuest.Pages.Activities
 {
+    [Authorize]
     public class AddModel : PageModel
     {
         private readonly ApplicationDbContext _db;
