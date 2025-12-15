@@ -1,0 +1,71 @@
+﻿@page
+@model FitQuest.Pages.Validation.IndexModel
+
+@{
+    ViewData["Title"] = "Validation";
+}
+
+<h2 class="mb-3">Video validation</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success">@Model.Message</div>
+}
+
+@if (Model.PendingActivities.Count == 0)
+{
+    <div class="alert alert-info">Nu există activități în așteptare cu video.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Date</th>
+                    <th>Evidence</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.PendingActivities)
+                {
+                    var ev = a.Evidences?.OrderByDescending(e => e.UploadedAt).FirstOrDefault(e => !e.Validated);
+
+                    <tr>
+                        <td>@(a.User?.Name ?? $"User#{a.UserId}")</td>
+                        <td>@a.Type</td>
+                        <td>@a.Duration min</td>
+                        <td>@a.Date.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (ev != null)
+                            {
+                                <a class="btn btn-sm btn-outline-primary" href="@ev.FilePath" target="_blank">
+                                    View video
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td class="d-flex gap-2">
+                            <form method="post" asp-page-handler="Approve">
+                                <input type="hidden" name="activityId" value="@a.Id" />
+                                <button class="btn btn-sm btn-success" type="submit">Approve</button>
+                            </form>
+
+                            <form method="post" asp-page-handler="Reject">
+                                <input type="hidden" name="activityId" value="@a.Id" />
+                                <button class="btn btn-sm btn-danger" type="submit">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

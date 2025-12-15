@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\NewFolder\**" />
+    <Content Remove="Pages\NewFolder\**" />
+    <EmbeddedResource Remove="Pages\NewFolder\**" />
+    <None Remove="Pages\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Pages\Account\Index.cshtml.cs" />
     <Compile Remove="Pages\Account\Logoutcshtml.cshtml.cs" />
   </ItemGroup>
