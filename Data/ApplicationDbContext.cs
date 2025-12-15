@@ -19,6 +19,8 @@ namespace FitQuest.Data
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<TrainerProfile> TrainerProfiles { get; set; }
         public DbSet<AdminLog> AdminLogs { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
