@@ -50,6 +50,27 @@ namespace FitQuest.Pages.Dashboard
 
             // 4. Calcul nivel
             Level = TotalXP / 100;
+
+            if (Level > 0)
+            {
+                var levelMessage = $"🎉 Felicitări! Ai ajuns la nivelul {Level}!";
+
+                var exists = await _db.Notifications.AnyAsync(n =>
+                    n.UserId == userId &&
+                    n.Message == levelMessage);
+
+                if (!exists)
+                {
+                    _db.Notifications.Add(new Notification
+                    {
+                        UserId = userId,
+                        Message = levelMessage
+                    });
+
+                    await _db.SaveChangesAsync();
+                }
+            }
+
             LevelProgressPercent = TotalXP % 100;
 
             // 5. Activități recente
