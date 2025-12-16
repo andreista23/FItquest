@@ -76,7 +76,6 @@ namespace FitQuest.Pages.Activities
                 return Page();
             }
 
-            // ✅ luăm user-ul din DB (pentru XP)
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
@@ -87,7 +86,6 @@ namespace FitQuest.Pages.Activities
 
             bool hasVideo = EvidenceFile != null && EvidenceFile.Length > 0;
 
-            // ✅ calculăm XP full o singură dată și îl salvăm în Activity
             int fullXp = CalculateFullXp(Input.Duration);
 
             var activity = new Activity
@@ -102,10 +100,8 @@ namespace FitQuest.Pages.Activities
             };
 
             _db.Activities.Add(activity);
-            await _db.SaveChangesAsync(); // acum avem activity.Id
+            await _db.SaveChangesAsync(); 
 
-
-            // ✅ dacă are video -> salvăm Evidence (XP se dă la validare)
             if (hasVideo)
             {
                 if (!EvidenceFile!.ContentType.StartsWith("video/"))
@@ -153,7 +149,6 @@ namespace FitQuest.Pages.Activities
                 return Page();
             }
 
-            // ✅ fără video -> half XP instant + XPEvent
             int halfXp = fullXp / 2;
 
             bool alreadyGiven = await _db.XPEvents.AnyAsync(x => x.ActivityId == activity.Id);
@@ -180,8 +175,8 @@ namespace FitQuest.Pages.Activities
 
         private static int CalculateFullXp(int durationMinutes)
         {
-            int baseXp = Random.Shared.Next(40, 81); // 40–80
-            int durationBonus = durationMinutes * 2; // 2 XP / minut
+            int baseXp = Random.Shared.Next(40, 81);
+            int durationBonus = durationMinutes * 2; 
             int fullXp = baseXp + durationBonus;
             return Math.Clamp(fullXp, 30, 300);
         }

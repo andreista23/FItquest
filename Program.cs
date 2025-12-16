@@ -42,15 +42,13 @@ builder.Services
         options.ClientId = section["ClientId"]!;
         options.ClientSecret = section["ClientSecret"]!;
 
-        options.CorrelationCookie.SameSite = SameSiteMode.Lax; // sau None dacă ai probleme
+        options.CorrelationCookie.SameSite = SameSiteMode.Lax;
         options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
 
-        // (opțional) vezi ce primești de la Google
         options.SaveTokens = true;
 
         options.Events.OnCreatingTicket = async context =>
         {
-            // sincronizare user din Google în baza ta de date
             var db = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
 
             var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
@@ -77,31 +75,25 @@ builder.Services
                 }
                 else
                 {
-                    // dacă vrei, actualizezi info
                     user.GoogleId ??= googleId;
                     await db.SaveChangesAsync();
                 }
 
-                // 👉 aici rescriem claims ca să folosim Id-ul intern, nu googleId-ul
                 var identity = (ClaimsIdentity)context.Principal!.Identity!;
 
-                // ștergem NameIdentifier vechi (googleId)
                 var existingNameId = identity.FindFirst(ClaimTypes.NameIdentifier);
                 if (existingNameId != null)
                 {
                     identity.RemoveClaim(existingNameId);
                 }
 
-                // punem NameIdentifier = ID-ul din baza ta de date
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
 
-                // păstrăm și googleId-ul ca claim separat, dacă vrei
                 if (!string.IsNullOrEmpty(googleId))
                 {
                     identity.AddClaim(new Claim("GoogleId", googleId));
                 }
 
-                // ne asigurăm că avem email și rol
                 if (identity.FindFirst(ClaimTypes.Email) == null)
                 {
                     identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));

@@ -4,7 +4,7 @@ namespace FitQuest.Models
 {
     public class Badge
     {
-        public int Id { get; set; } // badge_id
+        public int Id { get; set; } 
 
         [Required, MaxLength(100)]
         public string Title { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace FitQuest.Models
         public string? Criteria { get; set; }
 
         [MaxLength(300)]
-        public string? ImagePath { get; set; } // ex: "/images/badges/badge_5.jpeg"
+        public string? ImagePath { get; set; }
 
         public ICollection<UserBadge>? UserBadges { get; set; }
     }

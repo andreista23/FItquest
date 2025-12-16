@@ -5,10 +5,13 @@
     ViewData["Title"] = "Activities";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Activities</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Activities</h2>
+        <p class="text-muted mb-0">Your logged workouts</p>
+    </div>
 
-    <a class="btn btn-success" asp-page="/Activities/Add">
+    <a class="btn btn-success btn-lg" asp-page="/Activities/Add">
         + Add Activity
     </a>
 </div>
@@ -21,55 +24,76 @@
 }
 else
 {
-    <div class="table-responsive">
-        <table class="table table-striped align-middle">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Duration (min)</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Evidence</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var a in Model.Activities)
-                {
-                    var evidence = a.Evidences?.OrderByDescending(e => e.UploadedAt).FirstOrDefault();
+    <div class="row g-4">
+        @foreach (var a in Model.Activities)
+        {
+            var evidence = a.Evidences?
+            .OrderByDescending(e => e.UploadedAt)
+            .FirstOrDefault();
 
-                    <tr>
-                        <td>@a.Type</td>
-                        <td>@a.Duration</td>
-                        <td>@a.Date.ToLocalTime().ToString("yyyy-MM-dd")</td>
-                        <td>
-                            @if (a.Status == FitQuest.Models.ActivityStatus.Pending)
-                            {
-                                <span class="badge bg-warning text-dark">Pending</span>
-                            }
-                            else if (a.Status == FitQuest.Models.ActivityStatus.Approved)
-                            {
-                                <span class="badge bg-success">Approved</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Rejected</span>
-                            }
-                        </td>
-                        <td>
-                            @if (evidence != null)
-                            {
-                                <a class="btn btn-sm btn-outline-primary" href="@evidence.FilePath" target="_blank">
-                                    View video
-                                </a>
-                            }
-                            else
-                            {
-                                <span class="text-muted">—</span>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            <div class="col-md-6 col-lg-4">
+                <div class="activity-box h-100">
+
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="fw-bold mb-0">@a.Type</h5>
+
+                        @if (a.Status == FitQuest.Models.ActivityStatus.Pending)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (a.Status == FitQuest.Models.ActivityStatus.Approved)
+                        {
+                            <span class="badge bg-success">Approved</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Rejected</span>
+                        }
+                    </div>
+
+                    <div class="text-muted small mb-4">
+                        <div>⏱ <strong>@a.Duration</strong> min</div>
+                        <div>📅 @a.Date.ToLocalTime().ToString("dd MMM yyyy")</div>
+                    </div>
+
+                    <div class="mt-auto">
+                        @if (evidence != null)
+                        {
+                            <a class="btn btn-outline-primary w-100"
+                               href="@evidence.FilePath"
+                               target="_blank">
+                                View
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                No evidence
+                            </button>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
     </div>
+}
+
+@section Scripts {
+    <style>
+        .activity-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.06);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .activity-box:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,.12);
+            }
+    </style>
 }

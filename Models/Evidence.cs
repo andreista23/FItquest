@@ -5,7 +5,7 @@ namespace FitQuest.Models
 {
     public class Evidence
     {
-        public int Id { get; set; } // evidence_id
+        public int Id { get; set; } 
 
         [Required]
         public int ActivityId { get; set; }

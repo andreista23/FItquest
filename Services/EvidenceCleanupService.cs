@@ -22,7 +22,7 @@ namespace FitQuest.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // rulează imediat la pornire, apoi periodic
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -34,7 +34,6 @@ namespace FitQuest.Services
                     _logger.LogError(ex, "Evidence cleanup failed.");
                 }
 
-                // poți seta la 1 oră, 6 ore, 24 ore, etc.
                 await Task.Delay(TimeSpan.FromHours(6), stoppingToken);
             }
         }
@@ -46,9 +45,6 @@ namespace FitQuest.Services
 
             var now = DateTime.UtcNow;
 
-            // ia evidences care:
-            // - au fișier setat
-            // - și (sunt expirate) SAU (sunt validate -> safety net)
             var targets = await db.Evidence
                 .Where(e => !string.IsNullOrEmpty(e.FilePath) &&
                             (e.ExpiresAt <= now || e.Validated == true))
@@ -66,7 +62,6 @@ namespace FitQuest.Services
                     deletedFiles++;
                 }
 
-                // IMPORTANT: golește FilePath ca să nu încerce iar și iar
                 e.FilePath = string.Empty;
             }
 
@@ -81,7 +76,6 @@ namespace FitQuest.Services
             if (string.IsNullOrWhiteSpace(filePath))
                 return false;
 
-            // FilePath e de forma "/evidence/xxx.mp4"
             var relative = filePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString());
             var fullPath = Path.Combine(_env.WebRootPath, relative);
 

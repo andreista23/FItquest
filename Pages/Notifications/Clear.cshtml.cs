@@ -33,7 +33,6 @@ namespace FitQuest.Pages.Notifications
                 await _db.SaveChangesAsync();
             }
 
-            // ne întoarcem la pagina de unde a venit request-ul (nice UX)
             var referer = Request.Headers.Referer.ToString();
             if (!string.IsNullOrWhiteSpace(referer))
                 return Redirect(referer);

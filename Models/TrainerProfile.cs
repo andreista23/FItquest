@@ -4,7 +4,7 @@ namespace FitQuest.Models
 {
     public class TrainerProfile
     {
-        public int Id { get; set; } // trainer_id
+        public int Id { get; set; } 
 
         [MaxLength(1000)]
         public string? Bio { get; set; }

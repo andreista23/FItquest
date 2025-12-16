@@ -5,7 +5,7 @@ namespace FitQuest.Models
 {
     public class AdminLog
     {
-        public int Id { get; set; } // log_id
+        public int Id { get; set; } 
 
         [Required]
         public int AdminId { get; set; }

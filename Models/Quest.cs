@@ -4,7 +4,7 @@ namespace FitQuest.Models
 {
     public class Quest
     {
-        public int Id { get; set; } // quest_id
+        public int Id { get; set; } 
 
         [Required, MaxLength(100)]
         public string Title { get; set; } = string.Empty;

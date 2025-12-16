@@ -4,43 +4,172 @@
     ViewData["Title"] = "Leaderboard";
 }
 
-<div class="container mt-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="mb-0">🏆 Leaderboard</h2>
-    </div>
-
-    @if (Model.Me != null)
-    {
-        <div class="alert alert-info">
-            <strong>Tu:</strong> locul <strong>@Model.Me.Rank</strong> cu <strong>@Model.Me.TotalXp</strong> XP
-        </div>
-    }
-
-    <div class="card">
-        <div class="card-header fw-semibold">
-            Top 20 utilizatori
-        </div>
-        <div class="card-body p-0">
-            <table class="table mb-0 table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 90px;">Loc</th>
-                        <th>Utilizator</th>
-                        <th class="text-end" style="width: 140px;">XP</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var row in Model.TopUsers)
-                    {
-                        var isMe = Model.Me != null && row.UserId == Model.Me.UserId;
-                        <tr class="@(isMe ? "table-primary" : "")">
-                            <td class="fw-semibold">#@row.Rank</td>
-                            <td>@row.Name</td>
-                            <td class="text-end fw-semibold">@row.TotalXp</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">🏆 Leaderboard</h2>
+        <p class="text-muted mb-0">Global ranking by XP & Level</p>
     </div>
 </div>
+
+@if (Model.Me != null)
+{
+    <div class="alert alert-info mb-4">
+        <strong>You:</strong>
+        Rank <strong>#@Model.Me.Rank</strong>,
+        <strong>@Model.Me.TotalXp</strong> XP,
+        Level <strong>@(Model.Me.TotalXp / 100)</strong>
+    </div>
+}
+
+@if (Model.TopUsers.Any())
+{
+    <div class="row g-4 mb-5">
+        @foreach (var top in Model.TopUsers.Take(3))
+        {
+            <div class="col-md-4">
+                <div class="leader-card top-card rank-@top.Rank">
+                    <div class="rank-badge">#@top.Rank</div>
+
+                    <h4 class="fw-bold mb-1">@top.Name</h4>
+
+                    <div class="text-muted mb-2">
+                        Level @(top.TotalXp / 100)
+                    </div>
+
+                    <div class="fs-5 fw-semibold">
+                        @top.TotalXp XP
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="leader-list">
+        @foreach (var row in Model.TopUsers.Skip(3))
+        {
+            var isMe = Model.Me != null && row.UserId == Model.Me.UserId;
+
+            <div class="leader-row @(isMe ? "me" : "")">
+                <div class="rank">#@row.Rank</div>
+
+                <div class="name">
+                    @row.Name
+                    @if (isMe)
+                    {
+                        <span class="badge bg-primary ms-2">You</span>
+                    }
+                </div>
+
+                <div class="level">
+                    Level @(row.TotalXp / 100)
+                </div>
+
+                <div class="xp">
+                    @row.TotalXp XP
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        No users found in leaderboard.
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .leader-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,.08);
+            transition: transform .2s ease;
+        }
+
+            .leader-card:hover {
+                transform: translateY(-6px);
+            }
+
+        .rank-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            background: #212529;
+            color: #fff;
+        }
+
+        .rank-1 {
+            border-top: 5px solid #f1c40f;
+        }
+
+        .rank-2 {
+            border-top: 5px solid #bdc3c7;
+        }
+
+        .rank-3 {
+            border-top: 5px solid #cd7f32;
+        }
+
+        .leader-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .leader-row {
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 20px;
+            display: grid;
+            grid-template-columns: 80px 1fr 140px 140px;
+            align-items: center;
+            box-shadow: 0 0.3rem 0.75rem rgba(0,0,0,.06);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+            .leader-row:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 0.6rem 1.2rem rgba(0,0,0,.1);
+            }
+
+            .leader-row.me {
+                border-left: 6px solid #0d6efd;
+                background-color: #f8f9ff;
+            }
+
+            .leader-row .rank {
+                font-weight: 700;
+            }
+
+            .leader-row .xp,
+            .leader-row .level {
+                text-align: right;
+                font-weight: 600;
+            }
+
+        <style >
+        @@media (max-width: 768px) {
+            .leader-row
+
+        {
+            grid-template-columns: 60px 1fr;
+            grid-row-gap: 6px;
+        }
+
+        .leader-row .xp,
+        .leader-row .level {
+            text-align: left;
+        }
+
+        }
+        </style>
+    </style>
+}

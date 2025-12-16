@@ -53,8 +53,7 @@ namespace FitQuest.Pages.Account
                 return Page();
             }
 
-            // verificare parolă (hash stocat în DB cu BCrypt)
-            // dacă încă nu ai implementat parola hash, schimbăm aici ulterior
+            // verificare parolă (hash BCrypt)
             bool validPassword = BCrypt.Net.BCrypt.Verify(Input.Password, user.PasswordHash);
 
             if (!validPassword)
@@ -64,11 +63,7 @@ namespace FitQuest.Pages.Account
             }
             var claims = new List<Claim>
             {
-                        // AICI: NameIdentifier = ID-ul din baza ta de date (int)
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-
-                        // poți păstra și un claim custom, dar nu e obligatoriu
-                        // new Claim("UserId", user.Id.ToString()),
 
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim(ClaimTypes.Name, user.Name),

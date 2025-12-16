@@ -5,7 +5,7 @@ namespace FitQuest.Models
 {
     public class XPEvent
     {
-        public int Id { get; set; } // event_id
+        public int Id { get; set; } 
 
         [Required]
         public int UserId { get; set; }

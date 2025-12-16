@@ -33,14 +33,11 @@ namespace FitQuest.Pages.Leaderboard
 
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            // 1) calcul XP per user (din XPEvents)
             var xpByUser = await _db.XPEvents
                 .GroupBy(x => x.UserId)
                 .Select(g => new { UserId = g.Key, TotalXp = g.Sum(x => x.XPValue) })
                 .ToListAsync();
 
-            // 2) ia userii (nume/email) + join cu XP
-            //    presupun: Users are Name (sau Username). Dacă ai alt câmp, schimbă aici.
             var users = await _db.Users
                 .Select(u => new { u.Id, u.Name })
                 .ToListAsync();
@@ -55,17 +52,14 @@ namespace FitQuest.Pages.Leaderboard
                             TotalXp = xp?.TotalXp ?? 0
                         })
                         .OrderByDescending(r => r.TotalXp)
-                        .ThenBy(r => r.UserId) // tie-break stabil
+                        .ThenBy(r => r.UserId) 
                         .ToList();
 
-            // 3) setează rank (1..n)
             for (int i = 0; i < rows.Count; i++)
                 rows[i].Rank = i + 1;
 
-            // 4) Top N (ex: 20)
             TopUsers = rows.Take(20).ToList();
 
-            // 5) eu + locul meu
             Me = rows.FirstOrDefault(r => r.UserId == userId);
 
             return Page();

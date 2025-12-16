@@ -4,7 +4,6 @@ using FitQuest.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace FitQuest.Pages.Dashboard
 {
@@ -34,22 +33,18 @@ namespace FitQuest.Pages.Dashboard
 
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            // 1. Total activități
             TotalActivities = await _db.Activities
                 .Where(a => a.UserId == userId)
                 .CountAsync();
 
-            // 2. Activități din ultima săptămână
             LastWeekActivities = await _db.Activities
                 .Where(a => a.UserId == userId && a.Date >= DateTime.UtcNow.AddDays(-7))
                 .CountAsync();
 
-            // 3. XP Total — din XPEvent.XPValue
             TotalXP = await _db.XPEvents
                 .Where(x => x.UserId == userId)
                 .SumAsync(x => (int?)x.XPValue) ?? 0;
 
-            // 4. Calcul nivel
             Level = TotalXP / 100;
 
             if (Level >= 5 && Level % 5 == 0)
@@ -73,7 +68,6 @@ namespace FitQuest.Pages.Dashboard
                             EarnedAt = DateTime.UtcNow
                         });
 
-                        //  notificare pentru insignă
                         _db.Notifications.Add(new Notification
                         {
                             UserId = userId,
@@ -87,14 +81,12 @@ namespace FitQuest.Pages.Dashboard
 
             LevelProgressPercent = TotalXP % 100;
 
-            // 5. Activități recente
             RecentActivities = await _db.Activities
                 .Where(a => a.UserId == userId)
                 .OrderByDescending(a => a.Date)
                 .Take(5)
                 .ToListAsync();
 
-            //  Insignele utilizatorului
             MyBadges = await _db.UserBadges
                 .Where(ub => ub.UserId == userId)
                 .Include(ub => ub.Badge)

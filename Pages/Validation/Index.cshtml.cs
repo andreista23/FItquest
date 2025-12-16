@@ -28,7 +28,6 @@ namespace FitQuest.Pages.Validation
 
         public async Task OnGetAsync()
         {
-            // Luăm activitățile Pending care au cel puțin un Evidence nevalidat
             PendingActivities = await _db.Activities
                 .Include(a => a.User)
                 .Include(a => a.Evidences)
@@ -49,17 +48,14 @@ namespace FitQuest.Pages.Validation
             if (activity == null)
                 return NotFound();
 
-            // 1️⃣ setăm status Approved
             activity.Status = ActivityStatus.Approved;
 
-            // 2️⃣ marcăm evidence-urile ca validate
             if (activity.Evidences != null)
             {
                 foreach (var e in activity.Evidences)
                     e.Validated = true;
             }
 
-            // 3️⃣ ACORDARE XP FULL (doar o singură dată)
             bool alreadyGiven = await _db.XPEvents
                 .AnyAsync(x => x.ActivityId == activity.Id);
 
@@ -81,8 +77,6 @@ namespace FitQuest.Pages.Validation
             await _db.SaveChangesAsync();
             await _levelUpService.CheckAndNotifyAsync(activity.UserId);
 
-
-            // 4️⃣ ștergere fișiere video (privacy)
             DeleteEvidenceFiles(activity);
 
             Message = $"Activity #{activity.Id} approved (+{activity.FullXp} XP).";
@@ -103,12 +97,11 @@ namespace FitQuest.Pages.Validation
             if (activity.Evidences != null)
             {
                 foreach (var e in activity.Evidences)
-                    e.Validated = true; // “am luat o decizie”, deci nu mai e în coada de validare
+                    e.Validated = true; 
             }
 
             await _db.SaveChangesAsync();
 
-            // opțional: ștergere fișiere după respingere
             DeleteEvidenceFiles(activity);
 
             Message = $"Activity #{activity.Id} rejected.";
@@ -123,7 +116,6 @@ namespace FitQuest.Pages.Validation
             {
                 if (string.IsNullOrWhiteSpace(e.FilePath)) continue;
 
-                // FilePath e de forma "/evidence/xxx.mp4"
                 var relative = e.FilePath.TrimStart('/').Replace("/", Path.DirectorySeparatorChar.ToString());
                 var fullPath = Path.Combine(_env.WebRootPath, relative);
 

@@ -8,7 +8,7 @@ namespace FitQuest.Pages.Account
     {
         public async Task<IActionResult> OnGetAsync(string provider, string? returnUrl = null)
         {
-            // după login, unde vrei să ajungă?
+            
             var redirectUrl = Url.Page("/Index");
             var properties = new AuthenticationProperties
             {

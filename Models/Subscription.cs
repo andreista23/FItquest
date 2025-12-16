@@ -5,7 +5,7 @@ namespace FitQuest.Models
 {
     public class Subscription
     {
-        public int Id { get; set; } // subscription_id
+        public int Id { get; set; } 
 
         [Required]
         public int UserId { get; set; }

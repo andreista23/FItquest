@@ -31,12 +31,12 @@ namespace FitQuest.Data
 
             modelBuilder.Entity<UserBadge>()
                 .HasOne(ub => ub.User)
-                .WithMany() // <- fără u.UserBadges
+                .WithMany() 
                 .HasForeignKey(ub => ub.UserId);
 
             modelBuilder.Entity<UserBadge>()
                 .HasOne(ub => ub.Badge)
-                .WithMany(b => b.UserBadges) // aici poți păstra dacă vrei navigație în Badge
+                .WithMany(b => b.UserBadges)
                 .HasForeignKey(ub => ub.BadgeId);
 
 

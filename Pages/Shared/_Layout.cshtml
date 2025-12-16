@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FitQuest</title>
 
-    <!-- Bootstrap local -->
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Fitquest.styles.css" asp-append-version="true" />
@@ -27,7 +27,6 @@
         .content-wrapper {
             padding-top: 90px;
         }
-        /* Efect navbar scrolled */
         .navbar {
             transition: background-color 0.3s ease;
         }
@@ -163,7 +162,6 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-        // Navbar scroll effect
         document.addEventListener("scroll", () => {
             const nav = document.querySelector(".navbar");
             if (window.scrollY > 10) nav.classList.add("scrolled");

@@ -21,7 +21,6 @@ namespace FitQuest.Pages.Activities
 
         public async Task OnGetAsync()
         {
-            // ID-ul intern al user-ului (int) pus în ClaimTypes.NameIdentifier
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (!int.TryParse(userIdString, out int userId))
@@ -32,7 +31,7 @@ namespace FitQuest.Pages.Activities
 
             Activities = await _db.Activities
                 .Where(a => a.UserId == userId)
-                .Include(a => a.Evidences) // ca să putem arăta link către video
+                .Include(a => a.Evidences)
                 .OrderByDescending(a => a.Date)
                 .ToListAsync();
         }

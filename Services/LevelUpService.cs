@@ -27,7 +27,7 @@ namespace FitQuest.Services
                 var badgeTitle = $"Level {lvl}";
 
                 var badge = await _db.Badges.FirstOrDefaultAsync(b => b.Title == badgeTitle);
-                if (badge == null) continue; // nu există în tabela Badges
+                if (badge == null) continue; 
 
                 if (ownedBadgeIds.Contains(badge.Id)) continue;
 
@@ -59,10 +59,8 @@ namespace FitQuest.Services
             int currentLevel = totalXp / 100;
             int lastNotified = user.LastNotifiedLevel;
 
-            // ✅ Rulează mereu: acordă badge-uri lipsă până la nivelul curent
             await GrantMissingLevelBadgesAsync(userId, currentLevel);
 
-            // ✅ Notificări doar dacă a crescut nivelul
             if (currentLevel > lastNotified)
             {
                 for (int lvl = lastNotified + 1; lvl <= currentLevel; lvl++)

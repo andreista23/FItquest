@@ -23,7 +23,7 @@ public class RegisterModel : PageModel
 
     public class RegisterInput
     {
-        public string Username { get; set; } // maps to Name
+        public string Username { get; set; } 
         public string Email { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
@@ -42,7 +42,6 @@ public class RegisterModel : PageModel
             return Page();
         }
 
-        // check if email exists
         var exists = await _db.Users.AnyAsync(u => u.Email == Input.Email);
         if (exists)
         {
@@ -50,7 +49,6 @@ public class RegisterModel : PageModel
             return Page();
         }
 
-        // hash password
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(Input.Password);
 
         var user = new User
@@ -65,7 +63,6 @@ public class RegisterModel : PageModel
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
 
-        // AUTO LOGIN
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),

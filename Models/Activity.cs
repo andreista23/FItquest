@@ -6,27 +6,27 @@ namespace FitQuest.Models
 {
     public class Activity
     {
-        public int Id { get; set; } // activity_id
+        public int Id { get; set; }
 
         [Required]
         public int UserId { get; set; }
         public User User { get; set; }
 
         [Required, MaxLength(100)]
-        public string Type { get; set; } = string.Empty; // type
+        public string Type { get; set; } = string.Empty;
 
         [Required]
-        public int Duration { get; set; } // duration (în minute)
+        public int Duration { get; set; }
 
         [Required]
-        public DateTime Date { get; set; } = DateTime.UtcNow; // date
+        public DateTime Date { get; set; } = DateTime.UtcNow; 
 
         [Required]
-        public ActivityStatus Status { get; set; } = ActivityStatus.Pending; // status
+        public ActivityStatus Status { get; set; } = ActivityStatus.Pending; 
 
         public ICollection<Evidence>? Evidences { get; set; }
 
-        public int FullXp { get; set; }     // XP-ul maxim posibil
+        public int FullXp { get; set; }    
         public bool XpAwarded { get; set; } = false;
     }
 

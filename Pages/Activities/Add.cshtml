@@ -21,7 +21,6 @@
 
                 <form method="post" enctype="multipart/form-data" id="activityForm">
 
-                    <!-- TIP -->
                     <div class="mb-3">
                         <label asp-for="Input.Type" class="form-label fw-semibold">
                             🏋️ Tip activitate
@@ -32,7 +31,6 @@
                         <span asp-validation-for="Input.Type" class="text-danger"></span>
                     </div>
 
-                    <!-- DURATA -->
                     <div class="mb-3">
                         <label asp-for="Input.Duration" class="form-label fw-semibold">
                             ⏱️ Durată (minute)
@@ -43,7 +41,6 @@
                         <span asp-validation-for="Input.Duration" class="text-danger"></span>
                     </div>
 
-                    <!-- DATA -->
                     <div class="mb-3">
                         <label asp-for="Input.Date" class="form-label fw-semibold">
                             📅 Data activității
@@ -53,7 +50,6 @@
                         <span asp-validation-for="Input.Date" class="text-danger"></span>
                     </div>
 
-                    <!-- VIDEO -->
                     <div class="mb-4">
                         <label asp-for="EvidenceFile" class="form-label fw-semibold">
                             🎥 Dovadă video (opțional)
@@ -69,7 +65,6 @@
                         <span asp-validation-for="EvidenceFile" class="text-danger"></span>
                     </div>
 
-                    <!-- CTA -->
                     <div class="d-grid">
                         <button type="submit"
                                 class="btn btn-success btn-lg shadow-sm">
