@@ -22,5 +22,9 @@ namespace FitQuest.Models
 
         public string? PasswordHash { get; set; }
 
+        public int Xp { get; set; } = 0;
+
+        public int LastNotifiedLevel { get; set; } = 0;
+
     }
 }

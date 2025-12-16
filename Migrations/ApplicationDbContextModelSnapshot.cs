@@ -31,6 +31,9 @@ namespace Fitquest.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
+                    b.Property<int>("FullXp")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -41,6 +44,9 @@ namespace Fitquest.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("XpAwarded")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
@@ -91,6 +97,10 @@ namespace Fitquest.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -99,6 +109,80 @@ namespace Fitquest.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Badges");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Criteria = "Reach level 5",
+                            Description = "Ai ajuns la nivelul 5!",
+                            ImagePath = "/images/badges/level5.jpeg",
+                            Title = "Level 5"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Criteria = "Reach level 10",
+                            Description = "Ai ajuns la nivelul 10!",
+                            ImagePath = "/images/badges/level10.jpeg",
+                            Title = "Level 10"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Criteria = "Reach level 15",
+                            Description = "Ai ajuns la nivelul 15!",
+                            ImagePath = "/images/badges/level15.jpeg",
+                            Title = "Level 15"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Criteria = "Reach level 20",
+                            Description = "Ai ajuns la nivelul 20!",
+                            ImagePath = "/images/badges/level20.jpeg",
+                            Title = "Level 20"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Criteria = "Reach level 25",
+                            Description = "Ai ajuns la nivelul 25!",
+                            ImagePath = "/images/badges/level25.jpeg",
+                            Title = "Level 25"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Criteria = "Reach level 30",
+                            Description = "Ai ajuns la nivelul 30!",
+                            ImagePath = "/images/badges/level30.jpeg",
+                            Title = "Level 30"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Criteria = "Reach level 35",
+                            Description = "Ai ajuns la nivelul 35!",
+                            ImagePath = "/images/badges/level35.jpeg",
+                            Title = "Level 35"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Criteria = "Reach level 40",
+                            Description = "Ai ajuns la nivelul 40!",
+                            ImagePath = "/images/badges/level40.jpeg",
+                            Title = "Level 40"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Criteria = "Reach level 45",
+                            Description = "Ai ajuns la nivelul 45!",
+                            ImagePath = "/images/badges/level45.jpeg",
+                            Title = "Level 45"
+                        });
                 });
 
             modelBuilder.Entity("FitQuest.Models.Evidence", b =>
@@ -258,6 +342,9 @@ namespace Fitquest.Migrations
                     b.Property<string>("GoogleId")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("LastNotifiedLevel")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -267,6 +354,9 @@ namespace Fitquest.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Xp")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -25,6 +25,9 @@ namespace FitQuest.Models
         public ActivityStatus Status { get; set; } = ActivityStatus.Pending; // status
 
         public ICollection<Evidence>? Evidences { get; set; }
+
+        public int FullXp { get; set; }     // XP-ul maxim posibil
+        public bool XpAwarded { get; set; } = false;
     }
 
     public enum ActivityStatus
