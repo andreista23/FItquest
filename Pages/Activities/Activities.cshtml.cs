@@ -21,6 +21,7 @@ namespace FitQuest.Pages.Activities
 
         public async Task OnGetAsync()
         {
+            // ID-ul intern al user-ului (int) pus în ClaimTypes.NameIdentifier
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (!int.TryParse(userIdString, out int userId))
@@ -29,23 +30,11 @@ namespace FitQuest.Pages.Activities
                 return;
             }
 
-            // 🔔 Notificări pentru navbar
-            try
-            {
-                ViewData["Notifications"] = await _db.Notifications
-                    .Where(n => n.UserId == userId)
-                    .OrderByDescending(n => n.CreatedAt)
-                    .Take(5)
-                    .ToListAsync();
-
-                ViewData["UnreadNotifications"] = await _db.Notifications
-                    .CountAsync(n => n.UserId == userId && !n.IsRead);
-            }
-            catch
-            {
-                ViewData["Notifications"] = new List<FitQuest.Models.Notification>();
-                ViewData["UnreadNotifications"] = 0;
-            }
+            Activities = await _db.Activities
+                .Where(a => a.UserId == userId)
+                .Include(a => a.Evidences) // ca să putem arăta link către video
+                .OrderByDescending(a => a.Date)
+                .ToListAsync();
         }
     }
 }

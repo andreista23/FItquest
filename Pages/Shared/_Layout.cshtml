@@ -23,7 +23,7 @@
             font-weight: 700;
             font-size: 1.4rem;
         }
-        /* Asigură spațiu sub navbar-ul fix */
+       
         .content-wrapper {
             padding-top: 90px;
         }
@@ -46,7 +46,7 @@
 
                 <!-- LOGO + BRAND -->
                 <a class="navbar-brand d-flex align-items-center" asp-page="/Index">
-                    <img src="~/images/fitquest_logo.png" width="40" class="me-2" alt="FitQuest logo" />
+                    <img src="~/images/fitquest_logo.jpeg" width="40" class="me-2" alt="FitQuest logo" />
                     FitQuest
                 </a>
 
@@ -94,8 +94,12 @@
                         </li>
 
                         <li class="nav-item">
-                        <a class="nav-link" asp-page="/Validation/Index">Validate</a>
-</li>
+                            <a class="nav-link" asp-page="/Leaderboard/Index">Leaderboard</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Validation/Index">Validate</a>
+                        </li>
 
                     </ul>
 
@@ -106,40 +110,7 @@
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <!-- NOTIFICATIONS -->
-                            <li class="nav-item dropdown me-3">
-                                <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    🔔
-                                    @if ((ViewBag.UnreadNotifications ?? 0) > 0)
-                                    {
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            @ViewBag.UnreadNotifications
-                                        </span>
-                                    }
-                                </a>
-
-                                <ul class="dropdown-menu dropdown-menu-end p-2 shadow" style="width: 320px;">
-                                    <li class="px-2 pb-2 border-bottom">
-                                        <span class="fw-semibold">Notifications</span>
-                                    </li>
-
-                                    @if (ViewBag.Notifications != null && ViewBag.Notifications.Count > 0)
-                                    {
-                                        @foreach (var n in ViewBag.Notifications)
-                                        {
-                                            <li class="px-2 py-2 small border-bottom">
-                                                @n.Message
-                                                <div class="text-muted" style="font-size: 0.75rem;">
-                                                    @n.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
-                                                </div>
-                                            </li>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <li class="px-2 py-3 small text-muted">No notifications yet.</li>
-                                    }
-                                </ul>
-                            </li>
+                           <partial name="_NotificationsPartial" />
 
                             <!-- USER -->
                             <li class="nav-item me-3 d-flex align-items-center">

@@ -1,23 +1,24 @@
 ﻿using FitQuest.Data;
 using FitQuest.Models;
+using FitQuest.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
+using FitQuest.Services;
 
 namespace FitQuest.Pages.Validation
 {
-    // PROVIZORIU:
-    // [Authorize] sau [Authorize(Roles="Trainer")] când implementezi rolurile corect
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
-
+        private readonly LevelUpService _levelUpService;
         public IndexModel(ApplicationDbContext db, IWebHostEnvironment env)
         {
             _db = db;
             _env = env;
+            _levelUpService = new LevelUpService(db);
         }
 
         public List<Activity> PendingActivities { get; set; } = new();
@@ -78,6 +79,8 @@ namespace FitQuest.Pages.Validation
             }
 
             await _db.SaveChangesAsync();
+            await _levelUpService.CheckAndNotifyAsync(activity.UserId);
+
 
             // 4️⃣ ștergere fișiere video (privacy)
             DeleteEvidenceFiles(activity);

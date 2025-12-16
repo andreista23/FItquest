@@ -15,6 +15,9 @@ namespace FitQuest.Models
         [MaxLength(300)]
         public string? Criteria { get; set; }
 
+        [MaxLength(300)]
+        public string? ImagePath { get; set; } // ex: "/images/badges/badge_5.jpeg"
+
         public ICollection<UserBadge>? UserBadges { get; set; }
     }
 }

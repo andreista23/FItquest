@@ -11,6 +11,7 @@ namespace FitQuest.Pages.Dashboard
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
+        public List<Badge> MyBadges { get; set; } = new();
 
         public IndexModel(ApplicationDbContext db)
         {
@@ -51,23 +52,36 @@ namespace FitQuest.Pages.Dashboard
             // 4. Calcul nivel
             Level = TotalXP / 100;
 
-            if (Level > 0)
+            if (Level >= 5 && Level % 5 == 0)
             {
-                var levelMessage = $"🎉 Felicitări! Ai ajuns la nivelul {Level}!";
+                var badgeTitle = $"Level {Level}";
 
-                var exists = await _db.Notifications.AnyAsync(n =>
-                    n.UserId == userId &&
-                    n.Message == levelMessage);
+                var badge = await _db.Badges
+                    .FirstOrDefaultAsync(b => b.Title == badgeTitle);
 
-                if (!exists)
+                if (badge != null)
                 {
-                    _db.Notifications.Add(new Notification
-                    {
-                        UserId = userId,
-                        Message = levelMessage
-                    });
+                    bool alreadyHasBadge = await _db.UserBadges
+                        .AnyAsync(ub => ub.UserId == userId && ub.BadgeId == badge.Id);
 
-                    await _db.SaveChangesAsync();
+                    if (!alreadyHasBadge)
+                    {
+                        _db.UserBadges.Add(new UserBadge
+                        {
+                            UserId = userId,
+                            BadgeId = badge.Id,
+                            EarnedAt = DateTime.UtcNow
+                        });
+
+                        //  notificare pentru insignă
+                        _db.Notifications.Add(new Notification
+                        {
+                            UserId = userId,
+                            Message = $"🏅 Ai obținut insigna \"{badge.Title}\"!"
+                        });
+
+                        await _db.SaveChangesAsync();
+                    }
                 }
             }
 
@@ -79,6 +93,15 @@ namespace FitQuest.Pages.Dashboard
                 .OrderByDescending(a => a.Date)
                 .Take(5)
                 .ToListAsync();
+
+            //  Insignele utilizatorului
+            MyBadges = await _db.UserBadges
+                .Where(ub => ub.UserId == userId)
+                .Include(ub => ub.Badge)
+                .OrderByDescending(ub => ub.EarnedAt)
+                .Select(ub => ub.Badge)
+                .ToListAsync();
+
 
             return Page();
         }

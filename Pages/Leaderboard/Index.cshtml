@@ -1,0 +1,46 @@
+﻿@page
+@model FitQuest.Pages.Leaderboard.IndexModel
+@{
+    ViewData["Title"] = "Leaderboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="mb-0">🏆 Leaderboard</h2>
+    </div>
+
+    @if (Model.Me != null)
+    {
+        <div class="alert alert-info">
+            <strong>Tu:</strong> locul <strong>@Model.Me.Rank</strong> cu <strong>@Model.Me.TotalXp</strong> XP
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header fw-semibold">
+            Top 20 utilizatori
+        </div>
+        <div class="card-body p-0">
+            <table class="table mb-0 table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 90px;">Loc</th>
+                        <th>Utilizator</th>
+                        <th class="text-end" style="width: 140px;">XP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.TopUsers)
+                    {
+                        var isMe = Model.Me != null && row.UserId == Model.Me.UserId;
+                        <tr class="@(isMe ? "table-primary" : "")">
+                            <td class="fw-semibold">#@row.Rank</td>
+                            <td>@row.Name</td>
+                            <td class="text-end fw-semibold">@row.TotalXp</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

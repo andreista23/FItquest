@@ -19,6 +19,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, serverVersion);
 });
 
+builder.Services.AddScoped<FitQuest.Services.LevelUpService>();
+builder.Services.AddHostedService<FitQuest.Services.EvidenceCleanupService>();
+
+
 builder.Services
     .AddAuthentication(options =>
     {

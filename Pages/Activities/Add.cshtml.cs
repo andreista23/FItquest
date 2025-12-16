@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using FitQuest.Services;
+
 
 namespace FitQuest.Pages.Activities
 {
@@ -16,12 +18,16 @@ namespace FitQuest.Pages.Activities
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
+        private readonly LevelUpService _levelUpService;
 
-        public AddModel(ApplicationDbContext db, IWebHostEnvironment env)
+
+        public AddModel(ApplicationDbContext db, IWebHostEnvironment env, LevelUpService levelUpService)
         {
             _db = db;
             _env = env;
+            _levelUpService = levelUpService;
         }
+
 
         [BindProperty]
         public ActivityInput Input { get; set; } = new();
@@ -98,6 +104,7 @@ namespace FitQuest.Pages.Activities
             _db.Activities.Add(activity);
             await _db.SaveChangesAsync(); // acum avem activity.Id
 
+
             // ✅ dacă are video -> salvăm Evidence (XP se dă la validare)
             if (hasVideo)
             {
@@ -164,6 +171,7 @@ namespace FitQuest.Pages.Activities
 
                 activity.XpAwarded = true;
                 await _db.SaveChangesAsync();
+                await _levelUpService.CheckAndNotifyAsync(userId);
             }
 
             ViewData["Debug"] = $"Activity Approved (no evidence). ActivityId={activity.Id}, FullXp={fullXp}, Awarded={halfXp}";
