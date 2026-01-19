@@ -1,0 +1,41 @@
+﻿@page
+@model FitQuest.Pages.Admin.ActivitiesModel
+
+<h2>Activity Moderation</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model.Activities)
+        {
+            <tr>
+                <td>@a.User.Name</td>
+                <td>@a.Type</td>
+                <td>@a.Status</td>
+                <td>@a.Date.ToShortDateString()</td>
+                <td class="d-flex gap-2">
+
+                    <form method="post" asp-page-handler="Invalidate">
+                        <input type="hidden" name="activityId" value="@a.Id" />
+                        <button class="btn btn-warning btn-sm">Invalidate</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Delete"
+                          onsubmit="return confirm('Delete activity permanently?');">
+                        <input type="hidden" name="activityId" value="@a.Id" />
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

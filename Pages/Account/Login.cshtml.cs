@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using BCrypt.Net;
 
 namespace FitQuest.Pages.Account
 {
@@ -53,7 +52,18 @@ namespace FitQuest.Pages.Account
                 return Page();
             }
 
-            // verificare parolă (hash BCrypt)
+            if (user.IsBanned)
+            {
+                ErrorMessage = "Your account has been banned by an administrator.";
+                return Page();
+            }
+
+            if (string.IsNullOrEmpty(user.PasswordHash))
+            {
+                ErrorMessage = "Contul nu are parolă setată.";
+                return Page();
+            }
+
             bool validPassword = BCrypt.Net.BCrypt.Verify(Input.Password, user.PasswordHash);
 
             if (!validPassword)
@@ -61,22 +71,56 @@ namespace FitQuest.Pages.Account
                 ErrorMessage = "Parolă incorectă!";
                 return Page();
             }
+
+            // CLAIMS
             var claims = new List<Claim>
             {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
 
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Name, user.Name),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
-        };
+            var identity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
 
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(identity)
+            );
 
+            // 🔔 NOTIFICĂM ADMINII CĂ S-A LOGAT CINEVA
+            var admins = await _db.Users
+                .Where(u => u.Role == UserRole.Admin)
+                .ToListAsync();
 
+            foreach (var admin in admins)
+            {
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = admin.Id,
+                    Message = $"🔐 Login: {user.Email} ({user.Role})"
+                });
+            }
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+            // 🧾 AUDIT LOGIN ADMIN
+            if (user.Role == UserRole.Admin)
+            {
+                _db.AdminLogs.Add(new AdminLog
+                {
+                    AdminId = user.Id,
+                    Action = "Admin login",
+                    Target = user.Email
+                });
+            }
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            await _db.SaveChangesAsync();
+
+            // 🔀 REDIRECT SPECIAL ADMIN
+            if (user.Role == UserRole.Admin)
+                return RedirectToPage("/Admin/Dashboard");
 
             return RedirectToPage("/Index");
         }

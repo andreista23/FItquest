@@ -26,5 +26,9 @@ namespace FitQuest.Models
 
         public int LastNotifiedLevel { get; set; } = 0;
 
+        public bool IsBanned { get; set; } = false;
+
+        public TrainerProfile? TrainerProfile { get; set; }
+
     }
 }

@@ -3,6 +3,7 @@ using System;
 using FitQuest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitquest.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260119130336_ExtendTrainerProfile")]
+    partial class ExtendTrainerProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,8 +339,7 @@ namespace Fitquest.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("TrainerProfiles");
                 });
@@ -358,9 +360,6 @@ namespace Fitquest.Migrations
 
                     b.Property<string>("GoogleId")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsBanned")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LastNotifiedLevel")
                         .HasColumnType("int");
@@ -511,8 +510,8 @@ namespace Fitquest.Migrations
             modelBuilder.Entity("FitQuest.Models.TrainerProfile", b =>
                 {
                     b.HasOne("FitQuest.Models.User", "User")
-                        .WithOne("TrainerProfile")
-                        .HasForeignKey("FitQuest.Models.TrainerProfile", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -592,11 +591,6 @@ namespace Fitquest.Migrations
             modelBuilder.Entity("FitQuest.Models.TrainerProfile", b =>
                 {
                     b.Navigation("Subscriptions");
-                });
-
-            modelBuilder.Entity("FitQuest.Models.User", b =>
-                {
-                    b.Navigation("TrainerProfile");
                 });
 #pragma warning restore 612, 618
         }

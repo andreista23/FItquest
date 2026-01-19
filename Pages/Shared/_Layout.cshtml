@@ -60,10 +60,32 @@
                     <!-- LEFT -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                        <li class="nav-item">
-                            <a class="nav-link @(currentPage.Contains("/dashboard") ? "active" : "")"
-                               asp-page="/Dashboard/Index">Dashboard</a>
-                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Dashboard">Admin</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Users">Users</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Logs">Logs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Admin/Activities">Moderation</a>
+                            </li>
+                        }
+
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(currentPage.Contains("/admin") ? "active" : "")"
+                                   asp-page="/Admin/Dashboard">
+                                    Admin
+                                </a>
+                            </li>
+                        }
 
                         <!-- ACTIVITIES DROPDOWN -->
                         <li class="nav-item dropdown">
@@ -96,9 +118,24 @@
                             <a class="nav-link" asp-page="/Leaderboard/Index">Leaderboard</a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Validation/Index">Validate</a>
-                        </li>
+                        @if (User.IsInRole("Trainer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-page="/Trainer/Leaderboard">
+                                    Trainer Board
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Trainer") || User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(currentPage.Contains("/validation") ? "active" : "")"
+                                   asp-page="/Validation/Index">
+                                    Validate
+                                </a>
+                            </li>
+                        }
 
                     </ul>
 
@@ -140,6 +177,14 @@
                 </div>
             </div>
         </nav>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="alert alert-danger text-center mb-0 rounded-0">
+                🛠 You are logged in as <strong>Administrator</strong>
+            </div>
+        }
+
     </header>
 
     <!-- MAIN CONTENT -->
