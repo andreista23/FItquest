@@ -1,0 +1,39 @@
+﻿@page
+@model FitQuest.Pages.Trainer.MyActivitiesModel
+
+<h2 class="mb-4">📋 Activitățile mele</h2>
+
+@if (!Model.Activities.Any())
+{
+    <div class="alert alert-info">
+        Nu ai creat încă activități.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Descriere</th>
+                <th>Abonați</th>
+                <th>Creat la</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Activities)
+            {
+                <tr>
+                    <td>@a.Title</td>
+                    <td>@a.Description</td>
+                    <td>
+                        <span class="badge bg-primary">
+                            @a.Assignments.Count
+                        </span>
+                    </td>
+                    <td>@a.CreatedAt.ToLocalTime()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

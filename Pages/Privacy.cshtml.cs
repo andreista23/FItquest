@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FItquest.Pages
+namespace FitQuest.Pages
 {
     public class PrivacyModel : PageModel
     {

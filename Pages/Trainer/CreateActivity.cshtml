@@ -1,0 +1,52 @@
+﻿@page
+@model FitQuest.Pages.Trainer.CreateActivityModel
+
+@{
+    ViewData["Title"] = "Create Activity";
+}
+
+<h2 class="mb-4">➕ Creează activitate pentru abonați</h2>
+
+<div class="row">
+    <div class="col-md-8">
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="post">
+                    <div class="mb-3">
+                        <label asp-for="Activity.Title" class="form-label">
+                            Titlu activitate
+                        </label>
+                        <input asp-for="Activity.Title"
+                               class="form-control"
+                               placeholder="Ex: Cardio HIIT – ziua 1" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Activity.Description" class="form-label">
+                            Descriere
+                        </label>
+                        <textarea asp-for="Activity.Description"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Descrie exercițiile, durata, recomandări...">
+                        </textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">
+                        📤 Trimite către abonați
+                    </button>
+
+                    <a asp-page="/Trainer/MyActivities"
+                       class="btn btn-outline-secondary ms-2">
+                        Anulează
+                    </a>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

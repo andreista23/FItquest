@@ -1,0 +1,44 @@
+﻿@page
+@model FitQuest.Pages.Trainer.CreateFitnessPlanModel
+
+<h2 class="mb-4">🗂 Creează plan de fitness</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Plan.Title" class="form-label">Titlu</label>
+        <input asp-for="Plan.Title" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Plan.Description" class="form-label">Descriere</label>
+        <textarea asp-for="Plan.Description" class="form-control" rows="3"></textarea>
+    </div>
+
+    <h5 class="mt-4">Activități incluse</h5>
+
+    @if (!Model.MyActivities.Any())
+    {
+        <div class="alert alert-warning">
+            Nu ai activități create. Creează mai întâi activități.
+        </div>
+    }
+    else
+    {
+        @foreach (var a in Model.MyActivities)
+        {
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="checkbox"
+                       value="@a.Id"
+                       name="SelectedActivityIds" />
+                <label class="form-check-label">
+                    @a.Title
+                </label>
+            </div>
+        }
+    }
+
+    <button class="btn btn-success mt-3">
+        💾 Salvează planul
+    </button>
+</form>

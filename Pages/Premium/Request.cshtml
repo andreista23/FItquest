@@ -1,0 +1,20 @@
+﻿@page
+@model FitQuest.Pages.Premium.RequestModel
+
+<h3>Trimite dovada de plată</h3>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label class="form-label">Confirm Email</label>
+        <input class="form-control" value="@Model.UserEmail" disabled />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Upload dovadă plată (PDF)</label>
+        <input type="file" name="PaymentProof" class="form-control" required />
+    </div>
+
+    <button class="btn btn-success">
+        Trimite cererea
+    </button>
+</form>

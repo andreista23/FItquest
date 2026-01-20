@@ -1,0 +1,41 @@
+﻿@page
+@model FitQuest.Pages.Trainer.CreatePlanModel
+
+<h2 class="mb-4">💳 Creează abonamentul tău</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+
+                <form method="post">
+                    <div class="mb-3">
+                        <label asp-for="Plan.Title" class="form-label">Titlu</label>
+                        <input asp-for="Plan.Title" class="form-control"
+                               placeholder="Ex: Plan Premium 1 lună" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Plan.Description" class="form-label">Descriere</label>
+                        <textarea asp-for="Plan.Description" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Plan.Price" class="form-label">Preț (€)</label>
+                        <input asp-for="Plan.Price" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Plan.DurationDays" class="form-label">Durată (zile)</label>
+                        <input asp-for="Plan.DurationDays" class="form-control" />
+                    </div>
+
+                    <button class="btn btn-success">
+                        💾 Salvează abonamentul
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
