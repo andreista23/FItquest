@@ -1,4 +1,26 @@
 ﻿@page
-@model Fitquest.Pages.Activities.FeedbackFromTrainerModel
-@{
+@model FitQuest.Pages.Activities.FeedbackFromTrainerModel
+
+<h2>💬 Feedback de la antrenor</h2>
+
+@if (!Model.Feedbacks.Any())
+{
+    <div class="alert alert-info">
+        Nu ai primit încă feedback de la antrenor.
+    </div>
+}
+else
+{
+    @foreach (var f in Model.Feedbacks)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <strong>Antrenor:</strong> @f.TrainerProfile.User.Name
+                <p class="mt-2">@f.Message</p>
+                <small class="text-muted">
+                    @f.CreatedAt.ToLocalTime()
+                </small>
+            </div>
+        </div>
+    }
 }

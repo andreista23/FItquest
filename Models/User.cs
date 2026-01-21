@@ -7,6 +7,9 @@ namespace FitQuest.Models
     {
         public int Id { get; set; }
 
+        [Required]
+        public string IdentityUserId { get; set; } = string.Empty;
+
         [Required, MaxLength(100)]
         public string Email { get; set; } = string.Empty;
 

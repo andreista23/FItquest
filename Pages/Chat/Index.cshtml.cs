@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace FitQuest.Pages.Chat
 {
@@ -18,103 +17,127 @@ namespace FitQuest.Pages.Chat
             _db = db;
         }
 
+        // ====== DATA ======
         public List<ChatMessage> Messages { get; set; } = new();
+        public List<User> ChatUsers { get; set; } = new();
 
         [BindProperty]
         public string NewMessage { get; set; } = string.Empty;
 
-        private int TrainerProfileId;
-        private int UserId;
-        private bool IsTrainer;
+        public int TrainerProfileId { get; private set; }
+        public int UserId { get; private set; }
+        public bool IsTrainer { get; private set; }
+        public int? SelectedUserId { get; private set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        // ====== GET ======
+        public async Task<IActionResult> OnGetAsync(int? userId)
         {
             await LoadContextAsync();
+
+            if (IsTrainer)
+            {
+                await LoadTrainerUsersAsync();
+
+                SelectedUserId = userId ?? ChatUsers.FirstOrDefault()?.Id;
+                UserId = SelectedUserId ?? 0;
+            }
+
             await LoadMessagesAsync();
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        // ====== POST (send message) ======
+        public async Task<IActionResult> OnPostAsync(int? userId)
         {
             await LoadContextAsync();
 
-            if (TrainerProfileId == 0)
+            if (IsTrainer)
+                UserId = userId ?? UserId;
+
+            if (TrainerProfileId == 0 || UserId == 0)
                 return RedirectToPage();
 
+            // 1️⃣ Save message
             _db.ChatMessages.Add(new ChatMessage
             {
                 TrainerProfileId = TrainerProfileId,
                 UserId = UserId,
                 Message = NewMessage,
-                SentByTrainer = IsTrainer
+                SentByTrainer = IsTrainer,
+                SentAt = DateTime.UtcNow
             });
 
-            // notificare
-            int targetUserId = IsTrainer ? UserId : _db.TrainerProfiles
-                .Where(t => t.Id == TrainerProfileId)
-                .Select(t => t.UserId)
-                .First();
+            // 2️⃣ Notification
+            int targetUserId;
+
+            if (IsTrainer)
+            {
+                targetUserId = UserId; // trainer -> user
+            }
+            else
+            {
+                targetUserId = await _db.TrainerProfiles
+                    .Where(t => t.Id == TrainerProfileId)
+                    .Select(t => t.UserId)
+                    .FirstAsync(); // user -> trainer
+            }
 
             _db.Notifications.Add(new Notification
             {
                 UserId = targetUserId,
-                Message = "💬 Ai primit un mesaj nou."
+                Message = "💬 Ai primit un mesaj nou.",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
             });
 
             await _db.SaveChangesAsync();
-            return RedirectToPage();
+
+            return RedirectToPage(new { userId = UserId });
         }
 
+        // ====== CONTEXT ======
         private async Task LoadContextAsync()
         {
-            int currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            IsTrainer = User.IsInRole("Trainer");
 
-            if (User.IsInRole("Trainer"))
+            var lastChat = await _db.ChatMessages
+                .OrderByDescending(m => m.SentAt)
+                .FirstOrDefaultAsync();
+
+            if (lastChat == null)
             {
-                IsTrainer = true;
-                var trainerProfile = await _db.TrainerProfiles
-                    .FirstAsync(t => t.UserId == currentUserId);
-
-                TrainerProfileId = trainerProfile.Id;
-
-                UserId = await _db.Subscriptions
-                    .Where(s => s.TrainerId == trainerProfile.Id && s.Status == "active")
-                    .Select(s => s.UserId)
-                    .FirstAsync(); // demo: primul abonat
+                TrainerProfileId = 0;
+                UserId = 0;
+                return;
             }
-            else
-            {
-                IsTrainer = false;
-                UserId = currentUserId;
 
-                var trainerId = await _db.Subscriptions
-                    .Where(s => s.UserId == currentUserId && s.Status == "active")
-                    .Select(s => s.TrainerId)
-                    .FirstOrDefaultAsync();
-
-                if (trainerId == null)
-                {
-                    TrainerProfileId = 0;
-                    return;
-                }
-
-                TrainerProfileId = trainerId.Value;
-            }
+            TrainerProfileId = lastChat.TrainerProfileId;
+            UserId = lastChat.UserId;
         }
 
+        // ====== LOAD MESSAGES ======
         private async Task LoadMessagesAsync()
         {
-            if (TrainerProfileId == 0)
+            if (TrainerProfileId == 0 || UserId == 0)
             {
-                Messages = new List<ChatMessage>();
+                Messages = new();
                 return;
             }
 
             Messages = await _db.ChatMessages
-                .Where(m => m.TrainerProfileId == TrainerProfileId && m.UserId == UserId)
+                .Where(m => m.TrainerProfileId == TrainerProfileId &&
+                            m.UserId == UserId)
                 .OrderBy(m => m.SentAt)
                 .ToListAsync();
         }
 
+        // ====== TRAINER USERS ======
+        private async Task LoadTrainerUsersAsync()
+        {
+            ChatUsers = await _db.Subscriptions
+                .Where(s => s.TrainerId == TrainerProfileId && s.Status == "active")
+                .Select(s => s.User)
+                .ToListAsync();
+        }
     }
 }

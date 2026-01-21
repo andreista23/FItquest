@@ -1,4 +1,37 @@
 ﻿@page
-@model Fitquest.Pages.Trainer.GiveFeedbackModel
-@{
+@model FitQuest.Pages.Trainer.GiveFeedbackModel
+
+<h2>📝 Oferă feedback unui abonat</h2>
+
+@if (!Model.Subscribers.Any())
+{
+    <div class="alert alert-warning">
+        Nu ai niciun abonat activ.
+    </div>
+}
+else
+{
+    <form method="post" class="card p-4 shadow-sm">
+        <div class="mb-3">
+            <label class="form-label">Alege abonatul</label>
+            <select asp-for="SelectedUserId" class="form-select">
+                <option value="">-- selectează --</option>
+                @foreach (var u in Model.Subscribers)
+                {
+                    <option value="@u.Id">@u.Name (@u.Email)</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mesaj feedback</label>
+            <textarea asp-for="Message"
+                      class="form-control"
+                      rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Trimite feedback
+        </button>
+    </form>
 }

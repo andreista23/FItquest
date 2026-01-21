@@ -20,6 +20,8 @@ namespace FitQuest.Models
         public bool SentByTrainer { get; set; }
 
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
+
+
     }
 }
 

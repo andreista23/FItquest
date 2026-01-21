@@ -152,14 +152,14 @@
                                         ➕ Create activity
                                     </a>
                                 </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-page="/Trainer/Leaderboard">
+                                            🏆 Trainer Leaderboard
+                                        </a>
+                                    </li>
                                 <li>
                                     <a class="dropdown-item" asp-page="/Trainer/CreateFitnessPlan">
                                         🗂 Create fitness plan
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Trainer/GiveFeedback">
-                                        📝 Give feedback
                                     </a>
                                 </li>
                                 <li>
@@ -167,6 +167,11 @@
                                         ✅ Validate activities
                                     </a>
                                 </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-page="/Trainer/GiveFeedback">
+                                            📝 Feedback
+                                        </a>
+                                    </li>
                             </ul>
                         </li>
                     }
@@ -216,7 +221,8 @@
                 <ul class="navbar-nav ms-auto">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <partial name="_NotificationsPartial" />
+                            <partial name="_NotificationsPartial" />
+
 
                         <li class="nav-item d-flex align-items-center me-3">
                             <span class="navbar-text text-light">

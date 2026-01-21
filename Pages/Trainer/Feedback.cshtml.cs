@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace FitQuest.Pages.Activities
+namespace FitQuest.Pages.Trainer
 {
-    [Authorize]
-    public class FeedbackFromTrainerModel : PageModel
+    [Authorize(Roles = "Trainer")]
+    public class FeedbackModel : PageModel
     {
         private readonly ApplicationDbContext _db;
 
-        public FeedbackFromTrainerModel(ApplicationDbContext db)
+        public FeedbackModel(ApplicationDbContext db)
         {
             _db = db;
         }
@@ -21,14 +21,22 @@ namespace FitQuest.Pages.Activities
 
         public async Task OnGetAsync()
         {
-            int userId = int.Parse(
+            int trainerUserId = int.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!
             );
 
+            var trainerProfile = await _db.TrainerProfiles
+                .FirstOrDefaultAsync(t => t.UserId == trainerUserId);
+
+            if (trainerProfile == null)
+            {
+                Feedbacks = new();
+                return;
+            }
+
             Feedbacks = await _db.TrainerFeedbacks
-                .Include(f => f.TrainerProfile)
-                .ThenInclude(tp => tp.User)
-                .Where(f => f.UserId == userId)
+                .Include(f => f.User)
+                .Where(f => f.TrainerProfileId == trainerProfile.Id)
                 .OrderByDescending(f => f.CreatedAt)
                 .ToListAsync();
         }
