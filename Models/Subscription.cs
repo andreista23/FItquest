@@ -11,9 +11,9 @@ namespace FitQuest.Models
         public int UserId { get; set; }
         public User User { get; set; }
 
-        [Required]
-        public int TrainerId { get; set; }
-        public TrainerProfile Trainer { get; set; }
+        public int? TrainerId { get; set; }
+        public TrainerProfile? Trainer { get; set; }
+
 
         [Required, MaxLength(100)]
         public string PlanType { get; set; } = string.Empty;

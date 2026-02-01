@@ -1,0 +1,26 @@
+﻿@page
+@model FitQuest.Pages.Trainer.FeedbackModel
+
+<h2>📝 Feedback trimis clienților</h2>
+
+@if (!Model.Feedbacks.Any())
+{
+    <div class="alert alert-info">
+        Nu ai trimis încă feedback.
+    </div>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var f in Model.Feedbacks)
+        {
+            <div class="list-group-item">
+                <strong>Către:</strong> @f.User.Name
+                <p class="mb-1">@f.Message</p>
+                <small class="text-muted">
+                    @f.CreatedAt.ToLocalTime()
+                </small>
+            </div>
+        }
+    </div>
+}

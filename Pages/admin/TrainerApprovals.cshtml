@@ -1,0 +1,40 @@
+﻿@page
+@model FitQuest.Pages.Admin.TrainerApprovalsModel
+
+<h2>Trainer Applications</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>CV</th>
+            <th>Recommendation</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var t in Model.Pending)
+        {
+            <tr>
+                <td>@t.User.Name</td>
+                <td>@t.User.Email</td>
+                <td><a href="/@t.CvPath" target="_blank">CV</a></td>
+                <td><a href="/@t.RecommendationPath" target="_blank">Letter</a></td>
+                <td class="d-flex gap-2">
+
+                    <form method="post" asp-page-handler="Approve">
+                        <input type="hidden" name="trainerId" value="@t.Id" />
+                        <button class="btn btn-success btn-sm">Approve</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Deny">
+                        <input type="hidden" name="trainerId" value="@t.Id" />
+                        <button class="btn btn-danger btn-sm">Deny</button>
+                    </form>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

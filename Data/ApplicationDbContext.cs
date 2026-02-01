@@ -20,6 +20,17 @@ namespace FitQuest.Data
         public DbSet<TrainerProfile> TrainerProfiles { get; set; }
         public DbSet<AdminLog> AdminLogs { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<PremiumRequest> PremiumRequests { get; set; }
+        public DbSet<TrainerActivity> TrainerActivities { get; set; }
+        public DbSet<TrainerActivityAssignment> TrainerActivityAssignments { get; set; }
+        public DbSet<TrainerSubscriptionPlan> TrainerSubscriptionPlans { get; set; }
+        public DbSet<FitnessPlan> FitnessPlans { get; set; }
+        public DbSet<FitnessPlanItem> FitnessPlanItems { get; set; }
+        public DbSet<TrainerFeedback> TrainerFeedbacks { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
+
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,0 +1,70 @@
+﻿@page
+@model FitQuest.Pages.Chat.IndexModel
+
+<h2 class="mb-3">💬 Chat cu antrenorul</h2>
+
+@if (Model.TrainerProfileId == 0 && !User.IsInRole("Trainer"))
+{
+    <div class="alert alert-warning">
+        ❗ Nu ai încă un antrenor ales.
+        <br />
+        Mergi la <a asp-page="/Premium/ChooseTrainer">Alege antrenor</a> pentru a putea folosi chat-ul.
+    </div>
+}
+
+<div class="border rounded p-3 mb-3" style="height:400px; overflow-y:auto;">
+    @foreach (var m in Model.Messages)
+    {
+        <div class="mb-2 text-@(m.SentByTrainer ? "start" : "end")">
+            <span class="badge bg-@(m.SentByTrainer ? "primary" : "secondary")">
+                @(m.SentByTrainer ? "Trainer" : "Tu")
+            </span>
+            <div class="mt-1">
+                @m.Message
+            </div>
+            <small class="text-muted">
+                @m.SentAt.ToLocalTime()
+            </small>
+        </div>
+    }
+</div>
+
+<form method="post">
+    <div class="input-group">
+        <input asp-for="NewMessage"
+               class="form-control"
+               placeholder="Scrie un mesaj..." />
+        <button class="btn btn-primary">
+            Trimite
+        </button>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-9">
+        <!-- CHAT -->
+        @foreach (var m in Model.Messages)
+        {
+            <div class="mb-2">
+                <b>@(m.SentByTrainer ? "Trainer" : "User")</b>:
+                @m.Message
+            </div>
+        }
+    </div>
+
+    @if (User.IsInRole("Trainer"))
+    {
+        <div class="col-3 border-start">
+            <h6>Conversații</h6>
+            @foreach (var u in Model.ChatUsers)
+            {
+                <a asp-page="/Chat/Index"
+                   asp-route-userId="@u.Id"
+                   class="d-block mb-2 @(u.Id == Model.UserId ? "fw-bold" : "")">
+                    👤 @u.Name
+                </a>
+            }
+        </div>
+    }
+</div>
+

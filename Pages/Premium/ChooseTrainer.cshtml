@@ -1,0 +1,37 @@
+﻿@page
+@model FitQuest.Pages.Premium.ChooseTrainerModel
+
+<p class="text-muted">
+    Planuri găsite: @Model.Plans.Count
+</p>
+
+
+<h2 class="mb-4">🤝 Alege un abonament si un antrenor</h2>
+
+<div class="row g-3">
+    @foreach (var p in Model.Plans)
+    {
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>@p.TrainerProfile.User.Name</h5>
+                    <h6 class="text-muted">@p.Title</h6>
+
+                    <p>@p.Description</p>
+
+                    <p>
+                        <strong>@p.Price €</strong> /
+                        @p.DurationDays zile
+                    </p>
+
+                    <form method="post" asp-page-handler="Subscribe">
+                        <input type="hidden" name="planId" value="@p.Id" />
+                        <button class="btn btn-primary">
+                            Abonează-te
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

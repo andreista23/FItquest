@@ -1,0 +1,92 @@
+﻿@page
+@model FitQuest.Pages.Trainer.DashboardModel
+
+@if (TempData["PendingApproval"] != null)
+{
+    <div class="alert alert-warning">
+        ⏳ Contul tău de antrenor este în așteptarea aprobării de către un administrator.
+    </div>
+}
+
+@{
+    ViewData["Title"] = "Trainer Dashboard";
+}
+
+<h2 class="mb-4">Trainer Dashboard</h2>
+
+<a asp-page="/Trainer/CreateActivity"
+   class="btn btn-success mb-3">
+    ➕ Creează activitate
+</a>
+
+<div class="row mb-4">
+
+    <!-- Pending Activities -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body">
+                <h5 class="card-title">Pending Validations</h5>
+                <p class="display-6 fw-bold text-warning">
+                    @Model.PendingActivities
+                </p>
+                <a asp-page="/Validation/Index" class="btn btn-sm btn-warning">
+                    Go to Validate
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approved -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-success">
+            <div class="card-body">
+                <h5 class="card-title">Approved Activities</h5>
+                <p class="display-6 fw-bold text-success">
+                    @Model.ApprovedActivities
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clients -->
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-primary">
+            <div class="card-body">
+                <h5 class="card-title">Clients</h5>
+                <p class="display-6 fw-bold text-primary">
+                    @Model.TotalClients
+                </p>
+                <small class="text-muted">Mock data (Sprint 4)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-4">🕒 Recent Pending Activities</h4>
+
+@if (!Model.RecentPending.Any())
+{
+    <p class="text-muted">No activities pending validation.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Activity</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.RecentPending)
+            {
+                <tr>
+                    <td>@a.User.Name</td>
+                    <td>@a.Type</td>
+                    <td>@a.Date.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

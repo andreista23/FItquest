@@ -1,0 +1,20 @@
+﻿@page
+@model FitQuest.Pages.Account.AccessDeniedModel
+
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-danger text-center">
+        <h4 class="mb-3">⛔ Access Denied</h4>
+
+        <p>
+            You do not have permission to access this page.
+        </p>
+
+        <a asp-page="/Index" class="btn btn-primary mt-3">
+            Go back to Home
+        </a>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 ﻿using FitQuest.Data;
+using FitQuest.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,7 @@ namespace FitQuest.Pages.Leaderboard
                 .ToListAsync();
 
             var users = await _db.Users
+                .Where(u => u.Role == UserRole.Standard || u.Role == UserRole.Premium)
                 .Select(u => new { u.Id, u.Name })
                 .ToListAsync();
 

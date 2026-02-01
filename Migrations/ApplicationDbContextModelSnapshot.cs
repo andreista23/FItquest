@@ -185,6 +185,38 @@ namespace Fitquest.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FitQuest.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("SentByTrainer")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("TrainerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerProfileId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Evidence", b =>
                 {
                     b.Property<int>("Id")
@@ -214,6 +246,58 @@ namespace Fitquest.Migrations
                     b.ToTable("Evidence");
                 });
 
+            modelBuilder.Entity("FitQuest.Models.FitnessPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(600)
+                        .HasColumnType("varchar(600)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<int>("TrainerProfileId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerProfileId");
+
+                    b.ToTable("FitnessPlans");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.FitnessPlanItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("FitnessPlanId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainerActivityId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FitnessPlanId");
+
+                    b.HasIndex("TrainerActivityId");
+
+                    b.ToTable("FitnessPlanItems");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -237,6 +321,33 @@ namespace Fitquest.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.PremiumRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("PaymentProofPath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PremiumRequests");
                 });
 
             modelBuilder.Entity("FitQuest.Models.Quest", b =>
@@ -288,7 +399,7 @@ namespace Fitquest.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("TrainerId")
+                    b.Property<int?>("TrainerId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -303,6 +414,35 @@ namespace Fitquest.Migrations
                     b.ToTable("Subscriptions");
                 });
 
+            modelBuilder.Entity("FitQuest.Models.TrainerFeedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<int>("TrainerProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerProfileId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TrainerFeedbacks");
+                });
+
             modelBuilder.Entity("FitQuest.Models.TrainerProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -313,16 +453,68 @@ namespace Fitquest.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
+                    b.Property<string>("CvPath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<double>("RatingAvg")
                         .HasColumnType("double");
+
+                    b.Property<string>("RecommendationPath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Specialization")
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("TrainerProfiles");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.TrainerSubscriptionPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int>("DurationDays")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("TrainerProfileId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerProfileId");
+
+                    b.ToTable("TrainerSubscriptionPlans");
                 });
 
             modelBuilder.Entity("FitQuest.Models.User", b =>
@@ -341,6 +533,13 @@ namespace Fitquest.Migrations
 
                     b.Property<string>("GoogleId")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("IdentityUserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LastNotifiedLevel")
                         .HasColumnType("int");
@@ -436,6 +635,57 @@ namespace Fitquest.Migrations
                     b.ToTable("XPEvents");
                 });
 
+            modelBuilder.Entity("TrainerActivity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TrainerProfileId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerProfileId");
+
+                    b.ToTable("TrainerActivities");
+                });
+
+            modelBuilder.Entity("TrainerActivityAssignment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("TrainerActivityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerActivityId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TrainerActivityAssignments");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Activity", b =>
                 {
                     b.HasOne("FitQuest.Models.User", "User")
@@ -458,6 +708,25 @@ namespace Fitquest.Migrations
                     b.Navigation("Admin");
                 });
 
+            modelBuilder.Entity("FitQuest.Models.ChatMessage", b =>
+                {
+                    b.HasOne("FitQuest.Models.TrainerProfile", "TrainerProfile")
+                        .WithMany()
+                        .HasForeignKey("TrainerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitQuest.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerProfile");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Evidence", b =>
                 {
                     b.HasOne("FitQuest.Models.Activity", "Activity")
@@ -469,13 +738,52 @@ namespace Fitquest.Migrations
                     b.Navigation("Activity");
                 });
 
+            modelBuilder.Entity("FitQuest.Models.FitnessPlan", b =>
+                {
+                    b.HasOne("FitQuest.Models.TrainerProfile", "TrainerProfile")
+                        .WithMany()
+                        .HasForeignKey("TrainerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerProfile");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.FitnessPlanItem", b =>
+                {
+                    b.HasOne("FitQuest.Models.FitnessPlan", "FitnessPlan")
+                        .WithMany("Items")
+                        .HasForeignKey("FitnessPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrainerActivity", "TrainerActivity")
+                        .WithMany()
+                        .HasForeignKey("TrainerActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FitnessPlan");
+
+                    b.Navigation("TrainerActivity");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.PremiumRequest", b =>
+                {
+                    b.HasOne("FitQuest.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Subscription", b =>
                 {
                     b.HasOne("FitQuest.Models.TrainerProfile", "Trainer")
                         .WithMany("Subscriptions")
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TrainerId");
 
                     b.HasOne("FitQuest.Models.User", "User")
                         .WithMany()
@@ -486,6 +794,47 @@ namespace Fitquest.Migrations
                     b.Navigation("Trainer");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.TrainerFeedback", b =>
+                {
+                    b.HasOne("FitQuest.Models.TrainerProfile", "TrainerProfile")
+                        .WithMany()
+                        .HasForeignKey("TrainerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitQuest.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerProfile");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.TrainerProfile", b =>
+                {
+                    b.HasOne("FitQuest.Models.User", "User")
+                        .WithOne("TrainerProfile")
+                        .HasForeignKey("FitQuest.Models.TrainerProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.TrainerSubscriptionPlan", b =>
+                {
+                    b.HasOne("FitQuest.Models.TrainerProfile", "TrainerProfile")
+                        .WithMany()
+                        .HasForeignKey("TrainerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerProfile");
                 });
 
             modelBuilder.Entity("FitQuest.Models.UserBadge", b =>
@@ -543,6 +892,36 @@ namespace Fitquest.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TrainerActivity", b =>
+                {
+                    b.HasOne("FitQuest.Models.TrainerProfile", "TrainerProfile")
+                        .WithMany()
+                        .HasForeignKey("TrainerProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerProfile");
+                });
+
+            modelBuilder.Entity("TrainerActivityAssignment", b =>
+                {
+                    b.HasOne("TrainerActivity", "TrainerActivity")
+                        .WithMany("Assignments")
+                        .HasForeignKey("TrainerActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FitQuest.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TrainerActivity");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Activity", b =>
                 {
                     b.Navigation("Evidences");
@@ -553,6 +932,11 @@ namespace Fitquest.Migrations
                     b.Navigation("UserBadges");
                 });
 
+            modelBuilder.Entity("FitQuest.Models.FitnessPlan", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("FitQuest.Models.Quest", b =>
                 {
                     b.Navigation("UserQuests");
@@ -561,6 +945,16 @@ namespace Fitquest.Migrations
             modelBuilder.Entity("FitQuest.Models.TrainerProfile", b =>
                 {
                     b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.User", b =>
+                {
+                    b.Navigation("TrainerProfile");
+                });
+
+            modelBuilder.Entity("TrainerActivity", b =>
+                {
+                    b.Navigation("Assignments");
                 });
 #pragma warning restore 612, 618
         }

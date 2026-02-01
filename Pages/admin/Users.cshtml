@@ -1,0 +1,64 @@
+﻿@page
+@model FitQuest.Pages.Admin.UsersModel
+
+<h2>User Management</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model.Users)
+        {
+            <tr class="@(u.IsBanned ? "table-danger" : "")">
+                <td>@u.Name</td>
+                <td>@u.Email</td>
+                <td>@u.Role</td>
+                <td class="d-flex flex-column gap-2">
+
+                    <!-- ROLE CHANGE -->
+                    <form method="post" asp-page-handler="ChangeRole">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <select name="newRole" class="form-select form-select-sm">
+                            <option value="Standard">Standard</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Trainer">Trainer</option>
+                        </select>
+                        <button class="btn btn-sm btn-primary mt-1">Change Role</button>
+                    </form>
+
+                    <!-- BAN / UNBAN -->
+                    @if (!u.IsBanned)
+                    {
+                        <form method="post" asp-page-handler="Ban">
+                            <input type="hidden" name="userId" value="@u.Id" />
+                            <button class="btn btn-warning btn-sm">Ban</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form method="post" asp-page-handler="Unban">
+                            <input type="hidden" name="userId" value="@u.Id" />
+                            <button class="btn btn-success btn-sm">Unban</button>
+                        </form>
+                    }
+
+                    <!-- DELETE -->
+                    <form method="post" asp-page-handler="Delete"
+                          onsubmit="return confirm('Delete user permanently?');">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

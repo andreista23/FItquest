@@ -1,0 +1,51 @@
+﻿@page
+@model FitQuest.Pages.Premium.IndexModel
+
+@{
+    ViewData["Title"] = "Premium";
+}
+
+<h2>⭐ Premium Membership</h2>
+
+@if (Model.PremiumStatus == "Approved")
+{
+    <div class="alert alert-success">
+        ✅ Ești Premium!
+    </div>
+
+    <a asp-page="/Premium/ChooseTrainer" class="btn btn-primary">
+        Choose Trainer
+    </a>
+
+    <br />
+}
+else if (Model.PremiumStatus == "Pending")
+{
+    <div class="alert alert-warning">
+        ⏳ Cererea ta Premium este în curs de verificare.
+    </div>
+
+    <a asp-page="/Premium/History" class="btn btn-link">
+        Vezi istoricul cererilor
+    </a>
+}
+else
+{
+    <p>
+        Pentru a deveni Premium, efectuează plata pe site-ul nostru partener:
+    </p>
+
+    <a href="https://www.example-payment.com"
+       target="_blank"
+       class="btn btn-outline-primary mb-3">
+        Go to Payment Website
+    </a>
+
+    <p>
+        După efectuarea plății, trimite dovada pentru validare:
+    </p>
+
+    <a asp-page="/Premium/Request" class="btn btn-warning">
+        Am plătit – trimite dovada
+    </a>
+}

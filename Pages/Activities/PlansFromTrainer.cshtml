@@ -1,0 +1,32 @@
+﻿@page
+@model FitQuest.Pages.Activities.PlansFromTrainerModel
+
+<h2 class="mb-4">📚 Planuri de fitness de la antrenor</h2>
+
+@if (!Model.Plans.Any())
+{
+    <div class="alert alert-info">
+        Nu ai primit încă planuri de fitness.
+    </div>
+}
+else
+{
+    @foreach (var p in Model.Plans)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>@p.Title</h5>
+                <p class="text-muted">@p.Description</p>
+
+                <ul class="list-group list-group-flush">
+                    @foreach (var item in p.Items.OrderBy(i => i.Order))
+                    {
+                        <li class="list-group-item">
+                            @item.Order. @item.TrainerActivity.Title
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,58 @@
+﻿@page
+@model FitQuest.Pages.Activities.FromTrainerModel
+
+@{
+    ViewData["Title"] = "Activități de la antrenor";
+}
+
+<h2 class="mb-4">🏋️ Activități primite de la antrenor</h2>
+
+@if (!Model.Activities.Any())
+{
+    <div class="alert alert-info">
+        📭 Nu ai primit încă activități de la antrenorul tău.
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var a in Model.Activities)
+        {
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @a.TrainerActivity.Title
+                            <span class="badge bg-primary ms-2">Trainer</span>
+                        </h5>
+
+                        <p class="card-text">
+                            @a.TrainerActivity.Description
+                        </p>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            Primită la
+                            @a.TrainerActivity.CreatedAt.ToLocalTime()
+                        </small>
+
+                        @if (a.IsCompleted)
+                        {
+                            <span class="badge bg-success">✔ Completată</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">
+                                ⏳ În desfășurare
+                            </span>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+

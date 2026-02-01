@@ -1,15 +1,19 @@
 ﻿using FitQuest.Data;
 using FitQuest.Models;
 using FitQuest.Services;
+using FitQuest.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using FitQuest.Services;
 
 namespace FitQuest.Pages.Validation
 {
-    public class IndexModel : PageModel
+
+    [Authorize(Roles = "Trainer,Admin")]
+
+public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
@@ -26,8 +30,23 @@ namespace FitQuest.Pages.Validation
         [TempData]
         public string? Message { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+
+            // 🔒 blocare trainer neaprobat
+            if (User.IsInRole("Trainer"))
+            {
+                var trainerProfile = await _db.TrainerProfiles
+                    .FirstOrDefaultAsync(t => t.UserId == userId);
+
+                if (trainerProfile == null || !trainerProfile.IsApproved)
+                {
+                    TempData["PendingApproval"] = true;
+                    return RedirectToPage("/Trainer/Dashboard");
+                }
+            }
+
             var now = DateTime.UtcNow;
 
             var toExpire = await _db.Activities
@@ -54,6 +73,8 @@ namespace FitQuest.Pages.Validation
                             && a.Evidences.Any(e => !e.Validated))
                 .OrderBy(a => a.Date)
                 .ToListAsync();
+
+            return Page();
         }
 
 
@@ -118,6 +139,7 @@ namespace FitQuest.Pages.Validation
         }
 
 
+
         public async Task<IActionResult> OnPostRejectAsync(int activityId)
         {
             var activity = await _db.Activities
@@ -156,6 +178,7 @@ namespace FitQuest.Pages.Validation
             Message = $"Activity #{activity.Id} rejected.";
             return RedirectToPage();
         }
+        
 
         private void DeleteEvidenceFiles(Activity activity)
         {
@@ -173,6 +196,22 @@ namespace FitQuest.Pages.Validation
                     System.IO.File.Delete(fullPath);
                 }
             }
+
+            _db.Notifications.Add(new Notification
+            {
+                UserId = activity.UserId,
+                Message = $"✅ Your activity #{activity.Id} was approved."
+            });
+
+            _db.Notifications.Add(new Notification
+            {
+                UserId = activity.UserId,
+                Message = $"❌ Your activity #{activity.Id} was rejected."
+            });
+
+
+
+
         }
     }
 }

@@ -1,0 +1,81 @@
+﻿@page
+@model FitQuest.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="mb-4">🛠 Admin Dashboard</h2>
+
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-primary">
+            <div class="card-body">
+                <h6>Total Users</h6>
+                <p class="display-6 fw-bold">@Model.TotalUsers</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-success">
+            <div class="card-body">
+                <h6>Total Trainers</h6>
+                <p class="display-6 fw-bold">@Model.TotalTrainers</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body">
+                <h6>Pending Trainers</h6>
+                <p class="display-6 fw-bold text-warning">
+                    @Model.PendingTrainers
+                </p>
+                <a asp-page="/Admin/TrainerApprovals"
+                   class="btn btn-sm btn-warning">
+                    Review
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr />
+
+<h4 class="mb-3">🧾 Recent Admin Actions</h4>
+
+@if (!Model.RecentLogs.Any())
+{
+    <p class="text-muted">No admin actions yet.</p>
+}
+else
+{
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>
+                <th>Admin</th>
+                <th>Action</th>
+                <th>Target</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.RecentLogs)
+            {
+                <tr>
+                    <td>@log.Admin.Name</td>
+                    <td>@log.Action</td>
+                    <td>@log.Target</td>
+                    <td>@log.Timestamp.ToLocalTime()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-page="/Admin/Logs" class="btn btn-outline-secondary btn-sm">
+    View Admin Logs
+</a>

@@ -1,0 +1,40 @@
+﻿@page
+@model FitQuest.Pages.Trainer.RegisterModel
+
+@{
+    ViewData["Title"] = "Register Trainer";
+}
+
+<h2 class="mb-4">Register as Trainer</h2>
+
+<form method="post" enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label>Name</label>
+        <input asp-for="Input.Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Email</label>
+        <input asp-for="Input.Email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Password</label>
+        <input asp-for="Input.Password" type="password" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>CV (PDF)</label>
+        <input asp-for="Input.CvFile" type="file" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Recommendation Letter (PDF)</label>
+        <input asp-for="Input.RecommendationFile" type="file" class="form-control" />
+    </div>
+
+    <button class="btn btn-warning w-100">
+        Register as Trainer
+    </button>
+</form>

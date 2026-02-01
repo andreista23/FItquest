@@ -149,6 +149,19 @@ namespace FitQuest.Pages.Activities
                 return Page();
             }
 
+            var trainers = await _db.Users
+    .Where(u => u.Role == UserRole.Trainer)
+    .ToListAsync();
+
+            foreach (var trainer in trainers)
+            {
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = trainer.Id,
+                    Message = $"📥 New activity submitted by {user.Email}."
+                });
+            }
+
             int halfXp = fullXp / 2;
 
             bool alreadyGiven = await _db.XPEvents.AnyAsync(x => x.ActivityId == activity.Id);
@@ -180,5 +193,6 @@ namespace FitQuest.Pages.Activities
             int fullXp = baseXp + durationBonus;
             return Math.Clamp(fullXp, 30, 300);
         }
+
     }
 }

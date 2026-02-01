@@ -1,0 +1,41 @@
+﻿@page
+@model FitQuest.Pages.Admin.PremiumRequestsModel
+
+<h2>⭐ Premium Requests</h2>
+
+@if (!Model.Requests.Any())
+{
+    <p class="text-muted">No pending Premium requests.</p>
+}
+else
+{
+    @foreach (var r in Model.Requests)
+    {
+        <div class="card mb-3 p-3">
+            <strong>@r.User.Email</strong><br />
+            <span>Status: <b>@r.Status</b></span>
+
+            <div class="mt-2">
+                <a href="/@r.PaymentProofPath"
+                   target="_blank"
+                   class="btn btn-sm btn-outline-info">
+                    View Payment Proof
+                </a>
+
+                <form method="post" asp-page-handler="Approve" class="d-inline">
+                    <input type="hidden" name="id" value="@r.Id" />
+                    <button class="btn btn-sm btn-success">
+                        Approve
+                    </button>
+                </form>
+
+                <form method="post" asp-page-handler="Reject" class="d-inline">
+                    <input type="hidden" name="id" value="@r.Id" />
+                    <button class="btn btn-sm btn-danger">
+                        Reject
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+}

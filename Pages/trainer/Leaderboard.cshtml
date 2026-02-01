@@ -1,0 +1,32 @@
+﻿@page
+@model FitQuest.Pages.Trainer.LeaderboardModel
+
+@{
+    ViewData["Title"] = "Trainer Leaderboard";
+}
+
+<h2 class="fw-bold mb-4">🏋️ Trainer Leaderboard</h2>
+
+<table class="table table-hover shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Trainer</th>
+            <th>Validated Activities</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int rank = 1;
+        }
+        @foreach (var t in Model.Trainers)
+        {
+            <tr>
+                <td>@rank</td>
+                <td>@t.Name</td>
+                <td>@t.ValidatedCount</td>
+            </tr>
+            rank++;
+        }
+    </tbody>
+</table>

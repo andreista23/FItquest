@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FitQuest</title>
 
-
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Fitquest.styles.css" asp-append-version="true" />
@@ -19,157 +18,284 @@
             background-color: #f5f7fa;
         }
 
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.4rem;
-        }
-       
         .content-wrapper {
             padding-top: 90px;
         }
+
         .navbar {
             transition: background-color 0.3s ease;
         }
 
-            .navbar.scrolled {
-                background-color: #202020 !important;
-            }
+        .navbar.scrolled {
+            background-color: #202020 !important;
+        }
+
+        .navbar .dropdown-menu {
+            border-radius: 12px;
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: #f1f3f5;
+        }
+
+        .navbar .nav-link.active {
+            font-weight: 600;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
 <body>
-    <!-- NAVBAR -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow fixed-top">
-            <div class="container">
 
-                <!-- LOGO + BRAND -->
-                <a class="navbar-brand d-flex align-items-center" asp-page="/Index">
-                    <img src="~/images/fitquest_logo.png" width="40" class="me-2" alt="FitQuest logo" />
-                    FitQuest
-                </a>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow fixed-top">
+        <div class="container">
 
-                <!-- MOBILE -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <!-- LOGO -->
+            <a class="navbar-brand d-flex align-items-center" asp-page="/Index">
+                <img src="~/images/fitquest_logo.png" width="40" class="me-2" alt="FitQuest logo" />
+                FitQuest
+            </a>
 
-                <!-- MENU -->
-                <div class="collapse navbar-collapse" id="mainNavbar">
+            <!-- MOBILE -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                    <!-- LEFT -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse" id="mainNavbar">
 
-                        <li class="nav-item">
-                            <a class="nav-link @(currentPage.Contains("/dashboard") ? "active" : "")"
-                               asp-page="/Dashboard/Index">Dashboard</a>
-                        </li>
+                <!-- LEFT MENU -->
+                <ul class="navbar-nav me-auto">
 
-                        <!-- ACTIVITIES DROPDOWN -->
+                    <!-- DASHBOARD -->
+                    <li class="nav-item">
+                        <a class="nav-link @(currentPage.Contains("/dashboard") ? "active" : "")"
+                           asp-page="/Dashboard/Index">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <!-- ACTIVITIES -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown">
+                            🏃 Activities
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" asp-page="/Activities/Activities">
+                                    📋 All activities
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Activities/FromTrainer">
+                                    🏋️ From trainer
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Activities/PlansFromTrainer">
+                                    📚 Fitness plans
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- PREMIUM -->
+                    <li class="nav-item">
+                        <a class="nav-link @(currentPage.Contains("/premium") ? "active" : "")"
+                           asp-page="/Premium/Index">
+                            ⭐ Premium
+                        </a>
+                    </li>
+
+                    <!-- LEADERBOARD -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           asp-page="/Leaderboard/Index">
+                            🏆 Leaderboard
+                        </a>
+                    </li>
+
+                    <!-- CHAT -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           asp-page="/Chat/Index">
+                            💬 Chat
+                        </a>
+                    </li>
+
+                    <!-- FEEDBACK -->
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           asp-page="/Activities/FeedbackFromTrainer">
+                            📝 Feedback
+                        </a>
+                    </li>
+
+                    <!-- TRAINER MENU -->
+                    @if (User.IsInRole("Trainer"))
+                    {
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="activitiesDropdown" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
-                                Activities
+                            <a class="nav-link dropdown-toggle text-info"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                🧑‍🏫 Trainer
                             </a>
-
-                            <ul class="dropdown-menu" aria-labelledby="activitiesDropdown">
+                            <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" asp-page="/Activities/Activities">Activities</a>
+                                    <a class="dropdown-item" asp-page="/Trainer/CreateActivity">
+                                        ➕ Create activity
+                                    </a>
+                                </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-page="/Trainer/Leaderboard">
+                                            🏆 Trainer Leaderboard
+                                        </a>
+                                    </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Trainer/CreateFitnessPlan">
+                                        🗂 Create fitness plan
+                                    </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-page="/Activities/Add">Add Activity</a>
+                                    <a class="dropdown-item" asp-page="/Validation/Index">
+                                        ✅ Validate activities
+                                    </a>
+                                </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-page="/Trainer/GiveFeedback">
+                                            📝 Feedback
+                                        </a>
+                                    </li>
+                            </ul>
+                        </li>
+                    }
+
+                    <!-- ADMIN MENU -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-warning fw-semibold"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                🛠 Admin
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Admin/Dashboard">
+                                        📊 Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Admin/Users">
+                                        👥 Users
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Admin/PremiumRequests">
+                                        ⭐ Premium requests
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Admin/Activities">
+                                        🚨 Moderation
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Admin/Logs">
+                                        📜 Logs
+                                    </a>
                                 </li>
                             </ul>
                         </li>
+                    }
+                </ul>
 
-                        <li class="nav-item">
-                            <a class="nav-link @(currentPage.Contains("/quests") ? "active" : "")"
-                               asp-page="/Quests/Index">Quests</a>
+                <!-- RIGHT MENU -->
+                <ul class="navbar-nav ms-auto">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                            <partial name="_NotificationsPartial" />
+
+
+                        <li class="nav-item d-flex align-items-center me-3">
+                            <span class="navbar-text text-light">
+                                Hello, @User.Identity.Name!
+                            </span>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link @(currentPage.Contains("/premium") ? "active" : "")"
-                               asp-page="/Premium/Index">Premium</a>
+                            <form method="post" asp-page="/Account/Logout">
+                                <button class="btn btn-outline-warning btn-sm">
+                                    Logout
+                                </button>
+                            </form>
                         </li>
-
+                    }
+                    else
+                    {
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Leaderboard/Index">Leaderboard</a>
+                            <a class="btn btn-outline-light me-2"
+                               asp-page="/Account/Login">
+                                Login
+                            </a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Validation/Index">Validate</a>
+                            <a class="btn btn-warning"
+                               asp-page="/Account/Register">
+                                Register
+                            </a>
                         </li>
+                    }
+                </ul>
 
-                    </ul>
-
-
-                    <!-- RIGHT -->
-                    <ul class="navbar-nav ms-auto">
-
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <!-- NOTIFICATIONS -->
-                           <partial name="_NotificationsPartial" />
-
-                            <!-- USER -->
-                            <li class="nav-item me-3 d-flex align-items-center">
-                                <span class="navbar-text text-light">
-                                    Hello, @User.Identity.Name!
-                                </span>
-                            </li>
-
-                            <li class="nav-item">
-                                <form method="post" asp-page="/Account/Logout" class="d-inline">
-                                    <button class="btn btn-outline-warning btn-sm">Logout</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="btn btn-outline-light me-2" asp-page="/Account/Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-warning" asp-page="/Account/Register">Register</a>
-                            </li>
-                        }
-
-                    </ul>
-
-
-                </div>
             </div>
-        </nav>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <div class="container content-wrapper">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="border-top footer text-muted bg-dark text-light py-3 mt-5">
-        <div class="container text-center">
-            © 2025 - FitQuest
         </div>
-    </footer>
+    </nav>
 
-    <!-- SCRIPTS -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- ADMIN STATUS BAR -->
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="bg-warning text-dark text-center py-1 small">
+            🛠 Administrator mode enabled
+        </div>
+    }
+</header>
 
-    <script>
-        document.addEventListener("scroll", () => {
-            const nav = document.querySelector(".navbar");
-            if (window.scrollY > 10) nav.classList.add("scrolled");
-            else nav.classList.remove("scrolled");
-        });
-    </script>
+<!-- MAIN CONTENT -->
+<div class="container content-wrapper">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 
-    @await RenderSectionAsync("Scripts", required: false)
+<!-- FOOTER -->
+<footer class="bg-dark text-light py-3 mt-5">
+    <div class="container text-center">
+        © 2025 – FitQuest
+    </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+    document.addEventListener("scroll", () => {
+        const nav = document.querySelector(".navbar");
+        if (window.scrollY > 10) nav.classList.add("scrolled");
+        else nav.classList.remove("scrolled");
+    });
+</script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
-

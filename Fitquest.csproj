@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\NewFolder\**" />
-    <Content Remove="Pages\NewFolder\**" />
-    <EmbeddedResource Remove="Pages\NewFolder\**" />
-    <None Remove="Pages\NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Pages\Account\Index.cshtml.cs" />
     <Compile Remove="Pages\Account\Logoutcshtml.cshtml.cs" />
     <Compile Remove="Pages\Shared\Interface.cs" />
@@ -27,9 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\Dashboard\" />
-    <Folder Include="Pages\Admin\" />
-    <Folder Include="Pages\Trainer\" />
-    <Folder Include="Pages\Premium\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
