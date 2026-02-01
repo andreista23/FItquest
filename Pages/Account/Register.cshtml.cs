@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using FitQuest.Data;
+﻿using FitQuest.Data;
 using FitQuest.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 public class RegisterModel : PageModel
@@ -23,9 +24,19 @@ public class RegisterModel : PageModel
 
     public class RegisterInput
     {
-        public string Username { get; set; } 
+        [Required(ErrorMessage = "Username is required.")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
+
+        [Required(ErrorMessage = "Please confirm your password.")]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -36,11 +47,6 @@ public class RegisterModel : PageModel
         if (!ModelState.IsValid)
             return Page();
 
-        if (Input.Password != Input.ConfirmPassword)
-        {
-            ErrorMessage = "Passwords do not match.";
-            return Page();
-        }
 
         var exists = await _db.Users.AnyAsync(u => u.Email == Input.Email);
         if (exists)

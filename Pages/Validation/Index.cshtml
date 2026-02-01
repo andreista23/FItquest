@@ -33,7 +33,11 @@ else
             <tbody>
                 @foreach (var a in Model.PendingActivities)
                 {
-                    var ev = a.Evidences?.OrderByDescending(e => e.UploadedAt).FirstOrDefault(e => !e.Validated);
+                    var ev = a.Evidences?
+                    .OrderByDescending(e => e.UploadedAt)
+                    .FirstOrDefault(e => !e.Validated);
+
+                    var isExpired = ev != null && ev.ExpiresAt < DateTime.UtcNow;
 
                     <tr>
                         <td>@(a.User?.Name ?? $"User#{a.UserId}")</td>
@@ -43,26 +47,39 @@ else
                         <td>
                             @if (ev != null)
                             {
-                                <a class="btn btn-sm btn-outline-primary" href="@ev.FilePath" target="_blank">
-                                    View video
-                                </a>
+                                if (isExpired)
+                                {
+                                    <span class="badge bg-secondary">EXPIRAT</span>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-outline-primary" href="@ev.FilePath" target="_blank">
+                                        View video
+                                    </a>
+                                }
                             }
                             else
                             {
                                 <span class="text-muted">—</span>
                             }
                         </td>
+
                         <td class="d-flex gap-2">
                             <form method="post" asp-page-handler="Approve">
                                 <input type="hidden" name="activityId" value="@a.Id" />
-                                <button class="btn btn-sm btn-success" type="submit">Approve</button>
+                                <button class="btn btn-sm btn-success" type="submit" disabled="@(isExpired ? "disabled" : null)">
+                                    Approve
+                                </button>
                             </form>
 
                             <form method="post" asp-page-handler="Reject">
                                 <input type="hidden" name="activityId" value="@a.Id" />
-                                <button class="btn btn-sm btn-danger" type="submit">Reject</button>
+                                <button class="btn btn-sm btn-danger" type="submit" disabled="@(isExpired ? "disabled" : null)">
+                                    Reject
+                                </button>
                             </form>
                         </td>
+
                     </tr>
                 }
             </tbody>

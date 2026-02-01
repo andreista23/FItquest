@@ -28,15 +28,34 @@ namespace FitQuest.Pages.Validation
 
         public async Task OnGetAsync()
         {
+            var now = DateTime.UtcNow;
+
+            var toExpire = await _db.Activities
+                .Include(a => a.Evidences)
+                .Where(a => a.Status == ActivityStatus.Pending
+                            && a.Evidences != null
+                            && a.Evidences.Any(e => !e.Validated && e.ExpiresAt < now))
+                .ToListAsync();
+
+            if (toExpire.Count > 0)
+            {
+                foreach (var a in toExpire)
+                    a.Status = ActivityStatus.Expired;
+
+                await _db.SaveChangesAsync();
+            }
+
+           
             PendingActivities = await _db.Activities
                 .Include(a => a.User)
                 .Include(a => a.Evidences)
-                .Where(a => a.Status == ActivityStatus.Pending
+                .Where(a => (a.Status == ActivityStatus.Pending || a.Status == ActivityStatus.Expired)
                             && a.Evidences != null
                             && a.Evidences.Any(e => !e.Validated))
                 .OrderBy(a => a.Date)
                 .ToListAsync();
         }
+
 
         public async Task<IActionResult> OnPostApproveAsync(int activityId)
         {
@@ -47,6 +66,21 @@ namespace FitQuest.Pages.Validation
 
             if (activity == null)
                 return NotFound();
+
+            var now = DateTime.UtcNow;
+
+            bool hasExpiredEvidence = activity.Evidences != null &&
+                activity.Evidences.Any(e => !e.Validated && e.ExpiresAt < now);
+
+            if (hasExpiredEvidence)
+            {
+                activity.Status = ActivityStatus.Expired;
+                await _db.SaveChangesAsync();
+
+                Message = $"Activity #{activity.Id} expired (evidence expired) and cannot be approved.";
+                return RedirectToPage();
+            }
+
 
             activity.Status = ActivityStatus.Approved;
 
@@ -91,6 +125,21 @@ namespace FitQuest.Pages.Validation
                 .FirstOrDefaultAsync(a => a.Id == activityId);
 
             if (activity == null) return NotFound();
+
+            var now = DateTime.UtcNow;
+
+            bool hasExpiredEvidence = activity.Evidences != null &&
+                activity.Evidences.Any(e => !e.Validated && e.ExpiresAt < now);
+
+            if (hasExpiredEvidence)
+            {
+                activity.Status = ActivityStatus.Expired;
+                await _db.SaveChangesAsync();
+
+                Message = $"Activity #{activity.Id} expired (evidence expired).";
+                return RedirectToPage();
+            }
+
 
             activity.Status = ActivityStatus.Rejected;
 
