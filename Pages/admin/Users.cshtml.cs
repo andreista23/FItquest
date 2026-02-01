@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace FitQuest.Pages.Admin
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminWithGate")] // <-- IMPORTANT: gate + admin
     public class UsersModel : PageModel
     {
         private readonly ApplicationDbContext _db;
@@ -20,6 +20,22 @@ namespace FitQuest.Pages.Admin
 
         public List<User> Users { get; set; } = new();
 
+        private int CurrentAdminId =>
+            int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        private async Task<User?> GetTargetUserAsync(int userId)
+            => await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        private static bool IsAdmin(User u) => u.Role == UserRole.Admin;
+
+        private bool IsSelf(User u) => u.Id == CurrentAdminId;
+
+        private IActionResult Block(string msg)
+        {
+            TempData["Error"] = msg;
+            return RedirectToPage();
+        }
+
         public async Task OnGetAsync()
         {
             Users = await _db.Users
@@ -29,16 +45,30 @@ namespace FitQuest.Pages.Admin
 
         public async Task<IActionResult> OnPostBanAsync(int userId)
         {
-            var user = await _db.Users.FindAsync(userId);
-            if (user == null) return NotFound();
+            var target = await GetTargetUserAsync(userId);
+            if (target == null) return NotFound();
 
-            user.IsBanned = true;
+            // ❌ nu ai voie pe tine
+            if (IsSelf(target))
+                return Block("Nu îți poți da ban singur.");
+
+            // ❌ nu ai voie pe alt admin
+            if (IsAdmin(target))
+                return Block("Nu poți da ban unui alt admin.");
+
+            target.IsBanned = true;
 
             _db.AdminLogs.Add(new AdminLog
             {
-                AdminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                AdminId = CurrentAdminId,
                 Action = "Banned user",
-                Target = user.Email
+                Target = target.Email
+            });
+
+            _db.Notifications.Add(new Notification
+            {
+                UserId = target.Id,
+                Message = "⛔ Your account has been banned by an administrator."
             });
 
             await _db.SaveChangesAsync();
@@ -47,16 +77,30 @@ namespace FitQuest.Pages.Admin
 
         public async Task<IActionResult> OnPostUnbanAsync(int userId)
         {
-            var user = await _db.Users.FindAsync(userId);
-            if (user == null) return NotFound();
+            var target = await GetTargetUserAsync(userId);
+            if (target == null) return NotFound();
 
-            user.IsBanned = false;
+            // ❌ nu ai voie pe tine (unban pe tine e ciudat, dar îl blocăm)
+            if (IsSelf(target))
+                return Block("Nu poți modifica starea de ban pentru propriul cont.");
+
+            // ❌ nu ai voie pe alt admin
+            if (IsAdmin(target))
+                return Block("Nu poți da unban unui alt admin.");
+
+            target.IsBanned = false;
 
             _db.AdminLogs.Add(new AdminLog
             {
-                AdminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                AdminId = CurrentAdminId,
                 Action = "Unbanned user",
-                Target = user.Email
+                Target = target.Email
+            });
+
+            _db.Notifications.Add(new Notification
+            {
+                UserId = target.Id,
+                Message = "✅ Your account has been unbanned."
             });
 
             await _db.SaveChangesAsync();
@@ -65,17 +109,31 @@ namespace FitQuest.Pages.Admin
 
         public async Task<IActionResult> OnPostDeleteAsync(int userId)
         {
-            var user = await _db.Users.FindAsync(userId);
-            if (user == null) return NotFound();
+            var target = await GetTargetUserAsync(userId);
+            if (target == null) return NotFound();
+
+            // ❌ nu ai voie să te ștergi singur
+            if (IsSelf(target))
+                return Block("Nu îți poți șterge propriul cont de admin.");
+
+            // ❌ nu ai voie să ștergi alt admin
+            if (IsAdmin(target))
+                return Block("Nu poți șterge un alt admin.");
 
             _db.AdminLogs.Add(new AdminLog
             {
-                AdminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+                AdminId = CurrentAdminId,
                 Action = "Deleted user",
-                Target = user.Email
+                Target = target.Email
             });
 
-            _db.Users.Remove(user);
+            _db.Notifications.Add(new Notification
+            {
+                UserId = target.Id,
+                Message = "❌ Your account has been deleted."
+            });
+
+            _db.Users.Remove(target);
             await _db.SaveChangesAsync();
 
             return RedirectToPage();
@@ -83,52 +141,51 @@ namespace FitQuest.Pages.Admin
 
         public async Task<IActionResult> OnPostChangeRoleAsync(int userId, string newRole)
         {
-            var user = await _db.Users
+            var target = await _db.Users
                 .Include(u => u.TrainerProfile)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (user == null)
+            if (target == null)
                 return NotFound();
 
             if (!Enum.TryParse<UserRole>(newRole, out var role))
                 return BadRequest();
 
-            // revocare Trainer
-            if (user.Role == UserRole.Trainer && role != UserRole.Trainer)
+            // ❌ nu ai voie să schimbi rolul unui admin (nici al tău, nici al altuia)
+            if (IsAdmin(target))
+            {
+                if (IsSelf(target))
+                    return Block("Nu îți poți elimina sau modifica rolul de Admin.");
+                return Block("Nu poți modifica rolul unui alt Admin.");
+            }
+
+            // dacă user e Trainer și nu mai e Trainer → ștergem profile
+            if (target.Role == UserRole.Trainer && role != UserRole.Trainer)
             {
                 var profile = await _db.TrainerProfiles
-                    .FirstOrDefaultAsync(t => t.UserId == user.Id);
+                    .FirstOrDefaultAsync(t => t.UserId == target.Id);
 
                 if (profile != null)
                     _db.TrainerProfiles.Remove(profile);
             }
 
-            _db.Notifications.Add(new Notification
-            {
-                UserId = user.Id,
-                Message = "⛔ Your account has been banned by an administrator."
-            });
-
-            _db.Notifications.Add(new Notification
-            {
-                UserId = user.Id,
-                Message = "❌ Your account has been deleted."
-            });
-
-
-            user.Role = role;
+            target.Role = role;
 
             _db.AdminLogs.Add(new AdminLog
             {
-                AdminId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value),
+                AdminId = CurrentAdminId,
                 Action = "Changed user role",
-                Target = $"{user.Email} → {role}"
+                Target = $"{target.Email} → {role}"
+            });
+
+            _db.Notifications.Add(new Notification
+            {
+                UserId = target.Id,
+                Message = $"🔁 Your role has been changed to: {role}"
             });
 
             await _db.SaveChangesAsync();
             return RedirectToPage();
         }
-
-
     }
 }

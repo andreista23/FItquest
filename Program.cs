@@ -22,6 +22,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<FitQuest.Services.LevelUpService>();
 builder.Services.AddHostedService<FitQuest.Services.EvidenceCleanupService>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminWithGate", policy =>
+    {
+        policy.RequireRole("Admin");
+        policy.RequireClaim("AdminGatePassed", "true");
+    });
+});
+
 
 builder.Services
     .AddAuthentication(options =>

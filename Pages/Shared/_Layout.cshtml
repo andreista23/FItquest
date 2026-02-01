@@ -177,8 +177,9 @@
                     }
 
                     <!-- ADMIN MENU -->
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin") && User.HasClaim("AdminGatePassed", "true"))
                     {
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-warning fw-semibold"
                                href="#"

@@ -1,0 +1,37 @@
+﻿@page
+@model FitQuest.Pages.Account.AdminGateModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Admin verification";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-center mb-3">🛡 Admin verification</h3>
+                <p class="text-muted text-center mb-4">Introdu codul de admin ca să continui.</p>
+
+                @if (Model.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">@Model.ErrorMessage</div>
+                }
+
+                <form method="post">
+                    <div class="mb-3">
+                        <label>Admin code</label>
+                        <input asp-for="Code" type="password" class="form-control" autocomplete="one-time-code" />
+                    </div>
+
+                    <button class="btn btn-warning w-100">
+                        Verify
+                    </button>
+                </form>
+
+                <div class="mt-3 text-center">
+                    <a asp-page="/Index" class="text-decoration-none">Înapoi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

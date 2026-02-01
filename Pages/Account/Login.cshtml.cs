@@ -120,7 +120,7 @@ namespace FitQuest.Pages.Account
 
             // 🔀 REDIRECT SPECIAL ADMIN
             if (user.Role == UserRole.Admin)
-                return RedirectToPage("/Admin/Dashboard");
+                return RedirectToPage("/Account/AdminGate");
 
             return RedirectToPage("/Index");
         }
