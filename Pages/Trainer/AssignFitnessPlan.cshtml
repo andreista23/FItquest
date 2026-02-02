@@ -1,0 +1,43 @@
+﻿@page
+@model FitQuest.Pages.Trainer.AssignFitnessPlanModel
+
+<h2 class="mb-3">📌 Asignează plan</h2>
+
+@if (Model.Plan == null)
+{
+    <div class="alert alert-danger">Planul nu a fost găsit.</div>
+}
+else
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <h4 class="mb-1">@Model.Plan.Title</h4>
+            <p class="text-muted">@Model.Plan.Description</p>
+
+            <div class="small text-muted">
+                Activități: @(Model.Plan.Items?.Count ?? 0)
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Subscribers.Count == 0)
+    {
+        <div class="alert alert-warning">Nu ai abonați activi.</div>
+    }
+    else
+    {
+        <form method="post" class="card shadow-sm">
+            <div class="card-body">
+                <input type="hidden" asp-for="PlanId" />
+
+                <label class="form-label">Alege abonat</label>
+                <select class="form-select" asp-for="SelectedUserId" asp-items="Model.Subscribers" required>
+                    <option value="">-- selectează --</option>
+                </select>
+
+                <button class="btn btn-primary mt-3">✅ Asignează planul</button>
+                <a asp-page="/Trainer/MyPlans" class="btn btn-outline-secondary mt-3 ms-2">Înapoi</a>
+            </div>
+        </form>
+    }
+}

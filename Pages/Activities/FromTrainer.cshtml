@@ -32,21 +32,38 @@ else
                         </p>
                     </div>
 
+                    <!-- ✅ FOOTER NOU -->
                     <div class="card-footer d-flex justify-content-between align-items-center">
                         <small class="text-muted">
-                            Primită la
-                            @a.TrainerActivity.CreatedAt.ToLocalTime()
+                            Primită la @a.TrainerActivity.CreatedAt.ToLocalTime()
                         </small>
 
                         @if (a.IsCompleted)
                         {
-                            <span class="badge bg-success">✔ Completată</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success">✔ Completată</span>
+
+                                @if (!string.IsNullOrEmpty(a.ProofPath))
+                                {
+                                    <a class="btn btn-sm btn-outline-success"
+                                       href="~/@a.ProofPath"
+                                       target="_blank">
+                                        Vezi dovada
+                                    </a>
+                                }
+                            </div>
                         }
                         else
                         {
-                            <span class="badge bg-warning text-dark">
-                                ⏳ În desfășurare
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-warning text-dark">⏳ În desfășurare</span>
+
+                                <a class="btn btn-sm btn-primary"
+                                   asp-page="/Activities/SubmitProof"
+                                   asp-route-assignmentId="@a.Id">
+                                    Trimite dovadă
+                                </a>
+                            </div>
                         }
                     </div>
 
@@ -55,4 +72,3 @@ else
         }
     </div>
 }
-
