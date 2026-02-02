@@ -5,6 +5,15 @@
     ViewData["Title"] = "Premium";
 }
 
+@if (Model.TrainerName != null)
+{
+    <div class="alert alert-info">
+        🧑‍🏫 Antrenorul tău: <strong>@Model.TrainerName</strong><br />
+        Plan: <strong>@Model.PlanTypeActive</strong><br />
+        Expiră: <strong>@Model.EndDateActive?.ToString("dd.MM.yyyy")</strong>
+    </div>
+}
+
 <h2>⭐ Premium Membership</h2>
 
 @if (Model.PremiumStatus == "Approved")

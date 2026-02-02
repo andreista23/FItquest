@@ -1,7 +1,5 @@
 ﻿using FitQuest.Data;
-using FitQuest.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -18,47 +16,39 @@ namespace FitQuest.Pages.Premium
             _db = db;
         }
 
-
-        public bool IsPremium { get; set; }
-        public bool HasTrainer { get; set; }
-
         public string? PremiumStatus { get; set; }
+
+        // ✅ pentru box-ul cu antrenorul
+        public string? TrainerName { get; set; }
+        public string? PlanTypeActive { get; set; }
+        public DateTime? EndDateActive { get; set; }
 
         public async Task OnGetAsync()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+            // Status cerere premium
             var request = await _db.PremiumRequests
                 .Where(r => r.UserId == userId)
                 .OrderByDescending(r => r.CreatedAt)
                 .FirstOrDefaultAsync();
 
             PremiumStatus = request?.Status;
-        }
 
+            // Subscription activ + trainer (TrainerId = TrainerProfileId la tine)
+            var sub = await _db.Subscriptions
+                .Include(s => s.Trainer)
+                    .ThenInclude(t => t.User)
+                .Where(s => s.UserId == userId && s.Status == "active" && s.TrainerId != null)
+                .OrderByDescending(s => s.StartDate)
+                .FirstOrDefaultAsync();
 
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            var user = await _db.Users.FindAsync(userId);
-            if (user == null) return NotFound();
-
-            // mock premium activation
-            user.Role = UserRole.Premium;
-
-            _db.Subscriptions.Add(new Subscription
+            if (sub?.Trainer != null)
             {
-                UserId = userId,
-                TrainerId = null, // 🔥 OBLIGATORIU
-                PlanType = "Premium",
-                Status = "active"
-            });
-
-            await _db.SaveChangesAsync();
-
-            return RedirectToPage("/Premium/ChooseTrainer");
+                TrainerName = sub.Trainer.User.Name;
+                PlanTypeActive = sub.PlanType;
+                EndDateActive = sub.EndDate;
+            }
         }
     }
 }
