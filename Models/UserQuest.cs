@@ -12,9 +12,12 @@ namespace FitQuest.Models
         public int QuestId { get; set; }
         public Quest Quest { get; set; }
 
-        [MaxLength(50)]
-        public string State { get; set; } = "pending";
+        [MaxLength(20)]
+        public string State { get; set; } = "active"; // active / completed
 
         public int Progress { get; set; } = 0;
+
+        public DateTime AssignedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? CompletedAt { get; set; }
     }
 }

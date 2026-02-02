@@ -1,0 +1,64 @@
+﻿@page
+@model FitQuest.Pages.Admin.Quests.AddModel
+
+@{
+    ViewData["Title"] = "Add quest";
+}
+
+<h2 class="mb-3">Add quest</h2>
+
+<form method="post" class="card p-3 shadow-sm">
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input class="form-control" asp-for="Input.Title" />
+        <span class="text-danger" asp-validation-for="Input.Title"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" asp-for="Input.Description" rows="3"></textarea>
+        <span class="text-danger" asp-validation-for="Input.Description"></span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Reward XP</label>
+            <input class="form-control" asp-for="Input.RewardXP" type="number" />
+            <span class="text-danger" asp-validation-for="Input.RewardXP"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Target</label>
+            <input class="form-control" asp-for="Input.Target" type="number" />
+            <span class="text-danger" asp-validation-for="Input.Target"></span>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Period</label>
+            <input class="form-control" asp-for="Input.Period" placeholder="optional" />
+            <span class="text-danger" asp-validation-for="Input.Period"></span>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Type</label>
+        <select class="form-select" asp-for="Input.Type"
+                asp-items="Html.GetEnumSelectList<FitQuest.Models.QuestType>()">
+        </select>
+        <span class="text-danger" asp-validation-for="Input.Type"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" asp-for="Input.IsActive" />
+        <label class="form-check-label">Active</label>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a class="btn btn-secondary" asp-page="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

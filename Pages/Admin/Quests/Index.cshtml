@@ -1,0 +1,57 @@
+﻿@page
+@model FitQuest.Pages.Admin.Quests.IndexModel
+
+@{
+    ViewData["Title"] = "Admin - Quests";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Quests</h2>
+    <a class="btn btn-primary" asp-page="Add">Add quest</a>
+</div>
+
+@if (Model.Quests.Count == 0)
+{
+    <div class="alert alert-info">No quests yet. Add one.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Target</th>
+                    <th>Reward XP</th>
+                    <th>Period</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var q in Model.Quests)
+                {
+                    <tr>
+                        <td>@q.Id</td>
+                        <td>@q.Title</td>
+                        <td>@q.Type</td>
+                        <td>@q.Target</td>
+                        <td>@q.RewardXP</td>
+                        <td>@(q.Period ?? "—")</td>
+                        <td>
+                            @if (q.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

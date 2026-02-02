@@ -21,6 +21,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<FitQuest.Services.LevelUpService>();
 builder.Services.AddHostedService<FitQuest.Services.EvidenceCleanupService>();
+builder.Services.AddScoped<FitQuest.Services.QuestService>();
+
 
 builder.Services.AddAuthorization(options =>
 {
