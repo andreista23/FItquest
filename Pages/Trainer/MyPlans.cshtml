@@ -1,0 +1,107 @@
+﻿@page
+@model FitQuest.Pages.Trainer.MyPlansModel
+
+<h2 class="mb-4">📚 Planurile mele</h2>
+
+<div class="row g-3">
+
+    <!-- FITNESS PLANS -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">🗂 Fitness plans</h4>
+                    <a asp-page="/Trainer/CreateFitnessPlan" class="btn btn-sm btn-success">
+                        ➕ Creează
+                    </a>
+                </div>
+
+                @if (!Model.FitnessPlans.Any())
+                {
+                    <div class="alert alert-secondary mb-0">
+                        Nu ai creat niciun plan de fitness încă.
+                    </div>
+                }
+                else
+                {
+                    @foreach (var p in Model.FitnessPlans)
+                    {
+                        <div class="border rounded p-3 mb-3">
+                            <h5 class="mb-1">@p.Title</h5>
+                            <p class="text-muted mb-2">@p.Description</p>
+
+                            <div class="small text-muted mb-2">
+                                Activități incluse: @(p.Items?.Count ?? 0)
+                            </div>
+
+                            @if (p.Items != null && p.Items.Any())
+                            {
+                                <ul class="mb-0">
+                                    @foreach (var item in p.Items.OrderBy(i => i.Order))
+                                    {
+                                        <li>
+                                            <span class="text-muted">#@item.Order</span>
+                                            @item.TrainerActivity?.Title
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBSCRIPTION PLANS -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">💳 Abonamente</h4>
+                    <a asp-page="/Trainer/CreatePlan" class="btn btn-sm btn-success">
+                        ➕ Creează
+                    </a>
+                </div>
+
+                @if (!Model.SubscriptionPlans.Any())
+                {
+                    <div class="alert alert-secondary mb-0">
+                        Nu ai creat niciun abonament încă.
+                    </div>
+                }
+                else
+                {
+                    @foreach (var sp in Model.SubscriptionPlans)
+                    {
+                        <div class="border rounded p-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h5 class="mb-1">@sp.Title</h5>
+                                    <p class="text-muted mb-2">@sp.Description</p>
+                                </div>
+                                <div class="text-end">
+                                    <div><strong>@sp.Price €</strong></div>
+                                    <div class="text-muted">@sp.DurationDays zile</div>
+                                </div>
+                            </div>
+
+                            <div class="small">
+                                Status:
+                                @if (sp.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

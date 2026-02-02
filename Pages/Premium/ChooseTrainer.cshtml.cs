@@ -55,19 +55,20 @@ namespace FitQuest.Pages.Premium
             if (subscription == null)
                 return RedirectToPage("/Premium/Index");
 
-            subscription.TrainerId = trainerProfileId;
+            var trainerProfile = await _db.TrainerProfiles
+                .FirstOrDefaultAsync(t => t.Id == trainerProfileId);
+
+            if (trainerProfile == null)
+                return NotFound();
+
+            subscription.TrainerId = trainerProfile.UserId; // ✅ convertim profileId -> userId
 
             await _db.SaveChangesAsync();
 
-            // 🔔 notificare trainer
-            var trainer = await _db.TrainerProfiles
-                .Include(t => t.User)
-                .FirstAsync(t => t.Id == trainerProfileId);
-
             _db.Notifications.Add(new Notification
             {
-                UserId = trainer.UserId,
-                Message = $"⭐ New premium client assigned."
+                UserId = trainerProfile.UserId,
+                Message = "⭐ New premium client assigned."
             });
 
             await _db.SaveChangesAsync();
@@ -79,17 +80,39 @@ namespace FitQuest.Pages.Premium
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var plan = await _db.TrainerSubscriptionPlans.FindAsync(planId);
+            var plan = await _db.TrainerSubscriptionPlans
+                .Include(p => p.TrainerProfile)
+                .FirstOrDefaultAsync(p => p.Id == planId);
 
-            _db.Subscriptions.Add(new Subscription
+            if (plan == null) return NotFound();
+
+            // ✅ la tine TrainerId trebuie să fie TrainerProfileId
+            var trainerProfileId = plan.TrainerProfileId;
+
+            // (opțional) dacă există deja subscription activ, îl actualizăm în loc să adăugăm altul
+            var existing = await _db.Subscriptions
+                .FirstOrDefaultAsync(s => s.UserId == userId && s.Status == "active");
+
+            if (existing != null)
             {
-                UserId = userId,
-                TrainerId = plan.TrainerProfileId,
-                PlanType = plan.Title,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(plan.DurationDays),
-                Status = "active"
-            });
+                existing.TrainerId = trainerProfileId;
+                existing.PlanType = plan.Title;
+                existing.StartDate = DateTime.UtcNow;
+                existing.EndDate = DateTime.UtcNow.AddDays(plan.DurationDays);
+                existing.Status = "active";
+            }
+            else
+            {
+                _db.Subscriptions.Add(new Subscription
+                {
+                    UserId = userId,
+                    TrainerId = trainerProfileId, // ✅ plan.TrainerProfileId
+                    PlanType = plan.Title,
+                    StartDate = DateTime.UtcNow,
+                    EndDate = DateTime.UtcNow.AddDays(plan.DurationDays),
+                    Status = "active"
+                });
+            }
 
             await _db.SaveChangesAsync();
 

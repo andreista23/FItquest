@@ -1,39 +1,61 @@
 ﻿@page
 @model FitQuest.Pages.Trainer.MyActivitiesModel
 
-<h2 class="mb-4">📋 Activitățile mele</h2>
+<h3>🏋️ Activitățile mele</h3>
 
-@if (!Model.Activities.Any())
+@if (Model.Activities.Count == 0)
 {
-    <div class="alert alert-info">
-        Nu ai creat încă activități.
-    </div>
+    <div class="alert alert-secondary">Nu ai creat activități încă.</div>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Titlu</th>
-                <th>Descriere</th>
-                <th>Abonați</th>
-                <th>Creat la</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var a in Model.Activities)
-            {
-                <tr>
-                    <td>@a.Title</td>
-                    <td>@a.Description</td>
-                    <td>
-                        <span class="badge bg-primary">
-                            @a.Assignments.Count
-                        </span>
-                    </td>
-                    <td>@a.CreatedAt.ToLocalTime()</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row g-3">
+        @foreach (var a in Model.Activities)
+        {
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="mb-1">@a.Title</h5>
+                        <p class="text-muted mb-2">@a.Description</p>
+
+                        <div class="small text-muted mb-3">
+                            Asignări: @(a.Assignments?.Count ?? 0)
+                        </div>
+
+                        @if (Model.Subscribers.Count == 0)
+                        {
+                            <div class="alert alert-warning mb-0">
+                                Nu ai abonați activi momentan.
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Assign la un abonat -->
+                            <form method="post" asp-page-handler="Assign" class="d-flex gap-2 align-items-center mb-2">
+                                <input type="hidden" name="activityId" value="@a.Id" />
+
+                                <select name="userId" class="form-select form-select-sm" required>
+                                    <option value="">Alege abonat...</option>
+                                    @foreach (var s in Model.Subscribers)
+                                    {
+                                        <option value="@s.Value">@s.Text</option>
+                                    }
+                                </select>
+
+                                <button class="btn btn-primary btn-sm">Trimite</button>
+                            </form>
+
+                            <!-- Assign la toti abonatii -->
+                            <form method="post" asp-page-handler="AssignAll">
+                                <input type="hidden" name="activityId" value="@a.Id" />
+                                <button class="btn btn-outline-primary btn-sm">
+                                    Trimite la toți abonații
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
