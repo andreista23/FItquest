@@ -1,0 +1,74 @@
+﻿@page
+@model FitQuest.Pages.Leaderboard.FriendsModel
+@{
+    ViewData["Title"] = "Friends Leaderboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">🏆 Friends Leaderboard</h2>
+        <p class="text-muted mb-0">Ranking doar între prieteni</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Leaderboard/Index">Global</a>
+</div>
+
+@if (!Model.Rows.Any())
+{
+    <div class="alert alert-info">Nu ai prieteni sau nu există XP încă.</div>
+}
+else
+{
+    <div class="leader-list">
+        @foreach (var row in Model.Rows)
+        {
+            <div class="leader-row">
+                <div class="rank">#@row.Rank</div>
+                <div class="name">@row.Name</div>
+                <div class="level">Level @(row.TotalXp / 100)</div>
+                <div class="xp">@row.TotalXp XP</div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .leader-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .leader-row {
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 20px;
+            display: grid;
+            grid-template-columns: 80px 1fr 140px 140px;
+            align-items: center;
+            box-shadow: 0 0.3rem 0.75rem rgba(0,0,0,.06);
+        }
+
+            .leader-row .rank {
+                font-weight: 700;
+            }
+
+            .leader-row .xp,
+            .leader-row .level {
+                text-align: right;
+                font-weight: 600;
+            }
+
+        @@media (max-width:768px) {
+            .leader-row {
+                grid-template-columns: 60px 1fr;
+                grid-row-gap: 6px;
+            }
+
+                .leader-row .xp,
+                .leader-row .level {
+                    text-align: left;
+                }
+        }
+    </style>
+}
