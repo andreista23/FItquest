@@ -121,6 +121,25 @@
                         </a>
                     </li>
 
+                    @if (User.IsInRole("Premium"))
+                    {
+                        <div class="alert alert-success">
+                            ⭐ Ești Premium!
+                            <a asp-page="/Premium/Dashboard" class="btn btn-sm btn-outline-dark ms-2">
+                                Mergi la Premium Hub
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            🔓 Devino Premium pentru XP bonus și antrenor
+                            <a asp-page="/Premium/Buy" class="btn btn-sm btn-warning ms-2">
+                                Devino Premium
+                            </a>
+                        </div>
+                    }
+
                     <!-- LEADERBOARD -->
                     <li class="nav-item">
                         <a class="nav-link"

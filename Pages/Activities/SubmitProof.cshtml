@@ -15,11 +15,9 @@
         <form method="post" enctype="multipart/form-data">
             <input type="hidden" asp-for="AssignmentId" />
 
-            <div class="mb-3">
-                <label class="form-label">Dovadă (poză / PDF)</label>
-                <input type="file" class="form-control" asp-for="ProofFile" />
-                <div class="form-text">Poți trimite și doar mesaj dacă nu încarci fișier.</div>
-            </div>
+            <label class="form-label">Dovadă video</label>
+            <input type="file" class="form-control" asp-for="ProofFile" accept="video/*" required />
+            <div class="form-text">Doar video • max 30 MB</div>
 
             <div class="mb-3">
                 <label class="form-label">Mesaj (opțional)</label>
