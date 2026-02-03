@@ -31,7 +31,7 @@ namespace FitQuest.Pages.Validation
         [TempData]
         public string? Message { get; set; }
 
-        // ✅ new: global vs subscribers
+        // ✅ global vs subscribers
         [BindProperty(SupportsGet = true)]
         public string Scope { get; set; } = "global"; // "global" | "subscribers"
 
@@ -70,7 +70,7 @@ namespace FitQuest.Pages.Validation
                 await _db.SaveChangesAsync();
             }
 
-            // ✅ Query de bază (global)
+            // query de bază
             IQueryable<Activity> q = _db.Activities
                 .Include(a => a.User)
                 .Include(a => a.Evidences)
@@ -78,7 +78,7 @@ namespace FitQuest.Pages.Validation
                             && a.Evidences != null
                             && a.Evidences.Any(e => !e.Validated));
 
-            // ✅ dacă trainer + scope=subscribers => doar abonații lui
+            // trainer + subscribers
             if (User.IsInRole("Trainer") && Scope == "subscribers")
             {
                 var trainerProfile = await _db.TrainerProfiles
@@ -110,7 +110,7 @@ namespace FitQuest.Pages.Validation
             if (activity == null)
                 return NotFound();
 
-            // ✅ securitate: dacă trainer -> voie doar în scope global SAU dacă e abonatul lui (în scope=subscribers)
+            // 🔒 securitate pentru trainer în scope=subscribers
             if (User.IsInRole("Trainer"))
             {
                 var me = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -119,11 +119,13 @@ namespace FitQuest.Pages.Validation
                 if (Scope == "subscribers")
                 {
                     bool isMySubscriber = await _db.Subscriptions.AnyAsync(s =>
-                        s.TrainerId == trainerProfile.Id && s.UserId == activity.UserId && s.Status == "active");
+                        s.TrainerId == trainerProfile.Id &&
+                        s.UserId == activity.UserId &&
+                        s.Status == "active");
 
                     if (!isMySubscriber) return Forbid();
                 }
-                // dacă e global, îl lași cum ai zis (global validation)
+                // dacă e global, rămâne global validation (cum ai cerut)
             }
 
             var now = DateTime.UtcNow;
@@ -153,20 +155,38 @@ namespace FitQuest.Pages.Validation
 
             if (!alreadyGiven)
             {
-                activity.User.Xp += activity.FullXp;
+                // ✅ XP normal
+                int awardXp = activity.FullXp;
+
+                // ✅ bonus premium DOAR pentru trainer assigned
+                if (activity.IsTrainerAssigned && activity.User.Role == UserRole.Premium)
+                {
+                    awardXp = (int)Math.Round(activity.FullXp * 1.30);
+                }
+
+                activity.User.Xp += awardXp;
 
                 _db.XPEvents.Add(new XPEvent
                 {
                     UserId = activity.UserId,
                     ActivityId = activity.Id,
-                    XPValue = activity.FullXp,
-                    Reason = "Full XP after video validation (approved)."
+                    XPValue = awardXp,
+                    Reason = activity.IsTrainerAssigned
+                        ? "Trainer assignment approved (premium bonus if applicable)."
+                        : "Full XP after video validation (approved)."
                 });
 
                 activity.XpAwarded = true;
+
+                // ✅ mesaj corect
+                Message = $"Activity #{activity.Id} approved (+{awardXp} XP).";
+            }
+            else
+            {
+                Message = $"Activity #{activity.Id} approved (XP already granted).";
             }
 
-            // ✅ notificare corectă doar approve
+            // ✅ notificare approve
             _db.Notifications.Add(new Notification
             {
                 UserId = activity.UserId,
@@ -179,7 +199,6 @@ namespace FitQuest.Pages.Validation
 
             DeleteEvidenceFiles(activity);
 
-            Message = $"Activity #{activity.Id} approved (+{activity.FullXp} XP).";
             return RedirectToPage(new { Scope });
         }
 
@@ -192,7 +211,7 @@ namespace FitQuest.Pages.Validation
 
             if (activity == null) return NotFound();
 
-            // ✅ securitate: dacă trainer și scope=subscribers -> doar abonații lui
+            // 🔒 securitate pentru trainer în scope=subscribers
             if (User.IsInRole("Trainer"))
             {
                 var me = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -201,7 +220,9 @@ namespace FitQuest.Pages.Validation
                 if (Scope == "subscribers")
                 {
                     bool isMySubscriber = await _db.Subscriptions.AnyAsync(s =>
-                        s.TrainerId == trainerProfile.Id && s.UserId == activity.UserId && s.Status == "active");
+                        s.TrainerId == trainerProfile.Id &&
+                        s.UserId == activity.UserId &&
+                        s.Status == "active");
 
                     if (!isMySubscriber) return Forbid();
                 }
@@ -229,7 +250,7 @@ namespace FitQuest.Pages.Validation
                     e.Validated = true;
             }
 
-            // ✅ notificare corectă doar reject
+            // ✅ notificare reject
             _db.Notifications.Add(new Notification
             {
                 UserId = activity.UserId,

@@ -28,6 +28,8 @@ namespace FitQuest.Models
 
         public int FullXp { get; set; }    
         public bool XpAwarded { get; set; } = false;
+
+        public bool IsTrainerAssigned { get; set; } = false;
     }
 
     public enum ActivityStatus

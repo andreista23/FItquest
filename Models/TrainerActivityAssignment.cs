@@ -16,4 +16,6 @@ public class TrainerActivityAssignment
     public string? ProofPath { get; set; }          // ex: "trainer_proofs/12_99.pdf"
     public string? ProofMessage { get; set; }       // text optional
     public DateTime? CompletedAt { get; set; }
+    public int? ActivityId { get; set; }
+    public Activity? Activity { get; set; }
 }
