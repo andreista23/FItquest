@@ -1,28 +1,219 @@
+﻿/* =========================
+   FitQuest - Global Theme
+   (override peste Bootstrap)
+   ========================= */
+
+:root {
+    --fq-bg: #f7f8fb;
+    --fq-surface: #ffffff;
+    --fq-text: #111827;
+    --fq-muted: #6b7280;
+    --fq-nav: #1f2937; /* navbar gri închis */
+    --fq-nav-hover: #111827;
+    --fq-accent: #f4b400; /* galben */
+    --fq-accent-hover: #d89f00;
+    --fq-success: #22c55e; /* verde */
+    --fq-danger: #ef4444;
+    --fq-border: rgba(17, 24, 39, 0.10);
+    --fq-shadow: 0 12px 30px rgba(17, 24, 39, 0.08);
+    --fq-radius: 16px;
+    --fq-radius-sm: 12px;
+}
+
+/* Typography */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    background: var(--fq-bg);
+    color: var(--fq-text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    margin-bottom: 60px; /* păstrat din versiunea ta */
 }
 
+/* Better default links */
+a {
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* Focus ring (FitQuest accent) */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus,
+.form-control:focus, .form-check-input:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.15rem rgba(244, 180, 0, 0.20) !important;
+    border-color: rgba(244, 180, 0, 0.60) !important;
+}
+
+/* =========================
+   Navbar
+   ========================= */
+.navbar {
+    background-color: var(--fq-nav) !important;
+}
+
+    .navbar .navbar-brand,
+    .navbar .navbar-brand:hover {
+        color: #fff !important;
+    }
+
+    .navbar .nav-link {
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link:focus {
+            color: #fff !important;
+        }
+
+    .navbar .dropdown-menu {
+        border-radius: var(--fq-radius-sm);
+        border: 1px solid var(--fq-border);
+        box-shadow: var(--fq-shadow);
+    }
+
+/* =========================
+   Cards
+   ========================= */
+.card {
+    border-radius: var(--fq-radius);
+    border: 1px solid var(--fq-border);
+    box-shadow: 0 8px 20px rgba(17, 24, 39, 0.06);
+}
+
+    .card .card-header {
+        background: rgba(17, 24, 39, 0.03);
+        border-bottom: 1px solid var(--fq-border);
+        border-top-left-radius: var(--fq-radius);
+        border-top-right-radius: var(--fq-radius);
+    }
+
+/* =========================
+   Buttons
+   ========================= */
+.btn {
+    border-radius: 14px;
+    font-weight: 600;
+}
+
+.btn-warning {
+    background-color: var(--fq-accent) !important;
+    border-color: var(--fq-accent) !important;
+    color: #111 !important;
+}
+
+    .btn-warning:hover,
+    .btn-warning:focus {
+        background-color: var(--fq-accent-hover) !important;
+        border-color: var(--fq-accent-hover) !important;
+        color: #111 !important;
+    }
+
+.btn-success {
+    background-color: var(--fq-success) !important;
+    border-color: var(--fq-success) !important;
+}
+
+    .btn-success:hover,
+    .btn-success:focus {
+        filter: brightness(0.95);
+    }
+
+/* Optional: un buton "dark" mai elegant */
+.btn-dark {
+    background-color: #111827 !important;
+    border-color: #111827 !important;
+}
+
+    .btn-dark:hover,
+    .btn-dark:focus {
+        background-color: #0b1220 !important;
+        border-color: #0b1220 !important;
+    }
+
+/* =========================
+   Inputs
+   ========================= */
+.form-control, .form-select {
+    border-radius: 14px;
+    border: 1px solid var(--fq-border);
+}
+
+    .form-control::placeholder {
+        color: rgba(107, 114, 128, 0.85);
+    }
+
+/* =========================
+   Tables (Admin/Leaderboard)
+   ========================= */
+.table {
+    --bs-table-bg: transparent;
+}
+
+    .table thead th {
+        color: var(--fq-muted);
+        font-weight: 700;
+        border-bottom: 1px solid var(--fq-border);
+    }
+
+    .table tbody tr {
+        background: var(--fq-surface);
+    }
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(17, 24, 39, 0.02);
+}
+
+.table-responsive .table {
+    border-radius: var(--fq-radius);
+    overflow: hidden;
+}
+
+/* =========================
+   Badges / alerts
+   ========================= */
+.badge {
+    border-radius: 999px;
+    padding: .45em .75em;
+    font-weight: 700;
+}
+
+.alert {
+    border-radius: var(--fq-radius-sm);
+    border: 1px solid var(--fq-border);
+}
+
+/* =========================
+   Dropdown Notifications
+   ========================= */
 .notifications-dropdown {
     width: 320px;
     max-height: 300px;
     overflow-y: auto;
+}
+
+    /* Optional: un pic mai “premium” la item-uri */
+    .notifications-dropdown .dropdown-item {
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+/* =========================
+   Small helpers
+   ========================= */
+.shadow-soft {
+    box-shadow: var(--fq-shadow) !important;
+}
+
+.rounded-xl {
+    border-radius: var(--fq-radius) !important;
 }

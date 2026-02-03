@@ -1,71 +1,108 @@
 ﻿@page
 @model RegisterModel
-
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Register";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+<div class="login-page d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
 
-                <h3 class="text-center mb-4">Create Account</h3>
+                <div class="card login-card shadow-lg border-0">
+                    <div class="card-body p-4 p-md-5">
 
-                @if (Model.ErrorMessage != null)
-                {
-                    <div class="alert alert-danger">@Model.ErrorMessage</div>
-                }
+                        <div class="text-center mb-4">
+                            <div class="login-badge mx-auto mb-3">
+                                <span class="login-badge-icon">✨</span>
+                            </div>
+                            <h3 class="fw-bold mb-1">Create account</h3>
+                            <div class="text-muted">Start your FitQuest journey</div>
+                        </div>
 
-                <form method="post">
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input asp-for="Input.Username" class="form-control" />
-                        <span asp-validation-for="Input.Username" class="text-danger"></span>
+                        @if (Model.ErrorMessage != null)
+                        {
+                            <div class="alert alert-danger small mb-3">
+                                @Model.ErrorMessage
+                            </div>
+                        }
+
+                        <form method="post" novalidate>
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input asp-for="Input.Username"
+                                       class="form-control form-control-lg"
+                                       placeholder="Your name"
+                                       autocomplete="username" />
+                                <span asp-validation-for="Input.Username" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input asp-for="Input.Email"
+                                       class="form-control form-control-lg"
+                                       placeholder="name@example.com"
+                                       autocomplete="email" />
+                                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Password</label>
+                                    <input asp-for="Input.Password"
+                                           type="password"
+                                           class="form-control form-control-lg"
+                                           placeholder="••••••••"
+                                           autocomplete="new-password" />
+                                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Confirm password</label>
+                                    <input asp-for="Input.ConfirmPassword"
+                                           type="password"
+                                           class="form-control form-control-lg"
+                                           placeholder="••••••••"
+                                           autocomplete="new-password" />
+                                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-accent w-100 btn-lg fw-semibold mt-4">
+                                Register
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <a class="link-secondary small" asp-page="/Account/Login">
+                                Already have an account? Login here
+                            </a>
+                        </div>
+
+                        <div class="divider my-4">
+                            <span>trainer</span>
+                        </div>
+
+                        <a class="btn btn-success-fq w-100 btn-lg fw-semibold"
+                           asp-page="/Trainer/Register">
+                            🧑‍🏫 Register as trainer
+                        </a>
+
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input asp-for="Input.Email" class="form-control" />
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input asp-for="Input.Password" type="password" class="form-control" />
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Confirm Password</label>
-                        <input asp-for="Input.ConfirmPassword" type="password" class="form-control" />
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                    </div>
-
-                    <button class="btn btn-warning w-100 mt-2">Register</button>
-                </form>
-
-                <hr />
-
-                <div class="text-center">
-                    <a asp-page="/Account/Login">Already have an account? Login here</a>
+                <div class="text-center mt-3 small text-muted">
+                    © 2025 FitQuest
                 </div>
 
             </div>
         </div>
-
     </div>
-</div>
-
-<hr />
-
-<div class="text-center">
-    <p class="fw-semibold">Ești antrenor?</p>
-    <a class="btn btn-outline-primary"
-       asp-page="/Trainer/Register">
-        Înregistrează-te ca trainer
-    </a>
 </div>
 
 @section Scripts {
