@@ -3,7 +3,63 @@
 
 <h2 class="mb-4">📚 Planurile mele</h2>
 
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
 <div class="row g-3">
+
+    <!-- ✅ ASSIGN ACTIVITY (tot aici) -->
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">📌 Asignează activitate</h4>
+                </div>
+
+                @if (!Model.Subscribers.Any())
+                {
+                    <div class="alert alert-warning mt-3 mb-0">Nu ai abonați activi.</div>
+                }
+                else if (!Model.MyActivities.Any())
+                {
+                    <div class="alert alert-warning mt-3 mb-0">Nu ai activități create.</div>
+                }
+                else
+                {
+                    <form method="post" asp-page-handler="AssignActivity" class="mt-3">
+                        <div asp-validation-summary="All" class="text-danger mb-2"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Alege abonat</label>
+                                <select class="form-select" asp-for="SelectedUserId" asp-items="Model.Subscribers" required>
+                                    <option value="">-- selectează --</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label class="form-label">Alege activitate</label>
+                                <select class="form-select" asp-for="SelectedTrainerActivityId" asp-items="Model.MyActivities" required>
+                                    <option value="">-- selectează --</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">De câte ori?</label>
+                                <input class="form-control" asp-for="Times" type="number" min="1" max="10" />
+                                <div class="form-text">Ex: 2 = “Flotări” de 2 ori</div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary mt-3">✅ Asignează</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
 
     <!-- FITNESS PLANS -->
     <div class="col-lg-6">
@@ -33,7 +89,6 @@
                                     <p class="text-muted mb-2">@p.Description</p>
                                 </div>
 
-                                <!-- ✅ BUTON ASSIGN CORECT -->
                                 <a class="btn btn-sm btn-primary"
                                    asp-page="/Trainer/AssignFitnessPlan"
                                    asp-route-planId="@p.Id">

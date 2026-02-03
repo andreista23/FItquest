@@ -71,6 +71,7 @@ namespace FitQuest.Pages.Validation
             }
 
             // query de bază
+            // query de bază
             IQueryable<Activity> q = _db.Activities
                 .Include(a => a.User)
                 .Include(a => a.Evidences)
@@ -78,8 +79,7 @@ namespace FitQuest.Pages.Validation
                             && a.Evidences != null
                             && a.Evidences.Any(e => !e.Validated));
 
-            // trainer + subscribers
-            if (User.IsInRole("Trainer") && Scope == "subscribers")
+            if (User.IsInRole("Trainer"))
             {
                 var trainerProfile = await _db.TrainerProfiles
                     .FirstAsync(t => t.UserId == userId);
@@ -90,7 +90,22 @@ namespace FitQuest.Pages.Validation
                     .Distinct()
                     .ToListAsync();
 
-                q = q.Where(a => subscriberIds.Contains(a.UserId));
+                if (Scope == "subscribers")
+                {
+                    // ✅ doar abonații mei
+                    q = q.Where(a => subscriberIds.Contains(a.UserId));
+                }
+                else // Scope == "global"
+                {
+                    // ✅ EXCLUDE abonații mei din global
+                    q = q.Where(a => !subscriberIds.Contains(a.UserId));
+                }
+            }
+
+            // OPTIONAL (recomandat): nu afișa trainer-assigned în global deloc
+            if (Scope == "global")
+            {
+                q = q.Where(a => !a.IsTrainerAssigned);
             }
 
             PendingActivities = await q

@@ -9,6 +9,15 @@
         <h2 class="fw-bold mb-1">🏆 Leaderboard</h2>
         <p class="text-muted mb-0">Global ranking by XP & Level</p>
     </div>
+
+    <!-- ✅ BUTON FRIENDS -->
+    <a asp-page="/Leaderboard/Friends"
+       class="btn btn-outline-primary">
+        👥 Friends leaderboard
+    </a>
+</div>
+<div class="alert alert-info">
+    Nu ai încă prieteni. Adaugă prieteni ca să vezi leaderboard-ul lor 👥
 </div>
 
 @if (Model.Me != null)
