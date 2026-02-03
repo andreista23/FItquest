@@ -4,7 +4,7 @@ namespace FitQuest.Models
 {
     public class Quest
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
 
         [Required, MaxLength(100)]
         public string Title { get; set; } = string.Empty;
@@ -14,9 +14,17 @@ namespace FitQuest.Models
 
         public int RewardXP { get; set; }
 
-        [MaxLength(100)]
-        public string? Period { get; set; }
+        // "daily", "weekly", "lifetime" etc.
+        [MaxLength(50)]
+        public QuestPeriod Period { get; set; } = QuestPeriod.Lifetime;
 
-        public ICollection<UserQuest>? UserQuests { get; set; }
+
+        // ✅ nou
+        public QuestType Type { get; set; }
+
+        //X zile / X minute / X activități
+        public int Target { get; set; }
+
+        public bool IsActive { get; set; } = true;
     }
 }

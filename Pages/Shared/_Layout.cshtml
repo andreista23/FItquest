@@ -91,6 +91,9 @@
                                     📋 All activities
                                 </a>
                             </li>
+                            <li">
+                                <a class="dropdown-item" asp-page="/Quests/Index">🎯 My Quests</a>
+                            </li>
                             <li>
                                 <a class="dropdown-item" asp-page="/Activities/FromTrainer">
                                     🏋️ From trainer
@@ -177,6 +180,17 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item" asp-page="/Trainer/Dashboard">
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-page="/Trainer/MyActivities">
+                                        ⚙️ Manage activities
+                                    </a>
+                                </li>
+                                <li>
+
                                     <a class="dropdown-item" asp-page="/Validation/Index">
                                         ✅ Validate activities
                                     </a>
@@ -191,51 +205,62 @@
                     }
 
                     <!-- ADMIN MENU -->
-                    @if (User.IsInRole("Admin") && User.HasClaim("AdminGatePassed", "true"))
-                    {
+                  @if (User.IsInRole("Admin") && User.HasClaim("AdminGatePassed", "true"))
+{
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-warning fw-semibold"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown">
+                            🛠 Admin
+                        </a>
+                        <ul class="dropdown-menu">
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-warning fw-semibold"
-                               href="#"
-                               role="button"
-                               data-bs-toggle="dropdown">
-                                🛠 Admin
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Admin/Dashboard">
-                                        📊 Dashboard
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Admin/Users">
-                                        👥 Users
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Admin/PremiumRequests">
-                                        ⭐ Premium requests
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Admin/Activities">
-                                        🚨 Moderation
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Admin/TrainerApprovals">
-                                        🧑‍🏫 Trainer approvals
-                                        </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-page="/Admin/Logs">
-                                        📜 Logs
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    }
-                </ul>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/Dashboard">📊 Dashboard</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/Users">👥 Users</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/PremiumRequests">⭐ Premium requests</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/TrainerApprovals">🧑‍🏫 Trainer approvals</a>
+                            </li>
+
+                            <!-- separator -->
+                            <li><hr class="dropdown-divider" /></li>
+
+                            <!-- QUESTS GROUP -->
+                            <li>
+                                <h6 class="dropdown-header">🎯 Quests</h6>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/Quests/Index">📋 All quests</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/Quests/Add">➕ Add quest</a>
+                            </li>
+
+                            <!-- separator CARE ÎNCHIDE GRUPUL QUESTS -->
+                            <li><hr class="dropdown-divider" /></li>
+
+                            <!-- RESTUL ADMIN -->
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/Activities">🚨 Moderation</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/TrainerApprovals">🧑‍🏫 Trainer approvals</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-page="/Admin/Logs">📜 Logs</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                }
+
 
                 <!-- RIGHT MENU -->
                 <ul class="navbar-nav ms-auto">

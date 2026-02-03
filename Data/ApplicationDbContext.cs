@@ -30,6 +30,7 @@ namespace FitQuest.Data
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<AdminAccessCode> AdminAccessCodes { get; set; }
         public DbSet<FitnessPlanAssignment> FitnessPlanAssignments { get; set; }
+        public DbSet<UserLoginDay> UserLoginDays { get; set; }
 
 
 
@@ -52,10 +53,14 @@ namespace FitQuest.Data
                 .WithMany(b => b.UserBadges)
                 .HasForeignKey(ub => ub.BadgeId);
 
-
-            // UserQuest PK compus
             modelBuilder.Entity<UserQuest>()
                 .HasKey(uq => new { uq.UserId, uq.QuestId });
+
+            modelBuilder.Entity<UserLoginDay>()
+                .HasIndex(x => new { x.UserId, x.DayUtc })
+                .IsUnique();
+
+
 
             modelBuilder.Entity<Badge>().HasData(
             new Badge { Id = 1, Title = "Level 5", Description = "Ai ajuns la nivelul 5!", Criteria = "Reach level 5", ImagePath = "/images/badges/level5.jpeg" },

@@ -3,6 +3,7 @@ using System;
 using FitQuest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitquest.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260202173204_AddQuestTypeAndTargets3")]
+    partial class AddQuestTypeAndTargets3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -297,33 +300,6 @@ namespace Fitquest.Migrations
                     b.HasIndex("TrainerProfileId");
 
                     b.ToTable("FitnessPlans");
-                });
-
-            modelBuilder.Entity("FitQuest.Models.FitnessPlanAssignment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("FitnessPlanId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FitnessPlanId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FitnessPlanAssignments");
                 });
 
             modelBuilder.Entity("FitQuest.Models.FitnessPlanItem", b =>
@@ -752,17 +728,8 @@ namespace Fitquest.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("ProofMessage")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ProofPath")
-                        .HasColumnType("longtext");
 
                     b.Property<int>("TrainerActivityId")
                         .HasColumnType("int");
@@ -840,25 +807,6 @@ namespace Fitquest.Migrations
                         .IsRequired();
 
                     b.Navigation("TrainerProfile");
-                });
-
-            modelBuilder.Entity("FitQuest.Models.FitnessPlanAssignment", b =>
-                {
-                    b.HasOne("FitQuest.Models.FitnessPlan", "FitnessPlan")
-                        .WithMany()
-                        .HasForeignKey("FitnessPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FitQuest.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FitnessPlan");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FitQuest.Models.FitnessPlanItem", b =>

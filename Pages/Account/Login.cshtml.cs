@@ -91,7 +91,12 @@ namespace FitQuest.Pages.Account
                 new ClaimsPrincipal(identity)
             );
 
-            // 🔔 NOTIFICĂM ADMINII CĂ S-A LOGAT CINEVA
+            var questService = HttpContext.RequestServices
+                .GetRequiredService<FitQuest.Services.QuestService>();
+
+            await questService.OnUserLoggedInAsync(user.Id);
+
+            // NOTIFICĂM ADMINII CĂ S-A LOGAT CINEVA
             var admins = await _db.Users
                 .Where(u => u.Role == UserRole.Admin)
                 .ToListAsync();
@@ -105,7 +110,7 @@ namespace FitQuest.Pages.Account
                 });
             }
 
-            // 🧾 AUDIT LOGIN ADMIN
+            //  AUDIT LOGIN ADMIN
             if (user.Role == UserRole.Admin)
             {
                 _db.AdminLogs.Add(new AdminLog
@@ -118,7 +123,7 @@ namespace FitQuest.Pages.Account
 
             await _db.SaveChangesAsync();
 
-            // 🔀 REDIRECT SPECIAL ADMIN
+            //  REDIRECT SPECIAL ADMIN
             if (user.Role == UserRole.Admin)
                 return RedirectToPage("/Account/AdminGate");
 

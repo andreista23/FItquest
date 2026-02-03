@@ -18,11 +18,13 @@ public class IndexModel : PageModel
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment _env;
         private readonly LevelUpService _levelUpService;
-        public IndexModel(ApplicationDbContext db, IWebHostEnvironment env)
+        private readonly QuestService _questService;
+        public IndexModel(ApplicationDbContext db, IWebHostEnvironment env, LevelUpService levelUpService, QuestService questService)
         {
             _db = db;
             _env = env;
-            _levelUpService = new LevelUpService(db);
+            _levelUpService = levelUpService;
+            _questService = questService;
         }
 
         public List<Activity> PendingActivities { get; set; } = new();
@@ -130,9 +132,13 @@ public class IndexModel : PageModel
             }
 
             await _db.SaveChangesAsync();
+            await _questService.OnActivityApprovedAsync(activity.UserId, activity.Duration);
             await _levelUpService.CheckAndNotifyAsync(activity.UserId);
 
             DeleteEvidenceFiles(activity);
+
+            
+
 
             Message = $"Activity #{activity.Id} approved (+{activity.FullXp} XP).";
             return RedirectToPage();
