@@ -13,7 +13,7 @@
         : await Db.Notifications
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
-            .Take(5)
+            .Take(30)
             .ToListAsync();
 }
 
@@ -28,8 +28,8 @@
         }
     </a>
 
-    <ul class="dropdown-menu dropdown-menu-end p-2 shadow" style="width: 320px;">
-        <li class="px-2 pb-2 border-bottom">
+    <ul class="dropdown-menu dropdown-menu-end p-0 shadow notifications-dropdown">
+        <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
             <span class="fw-semibold">Notifications</span>
             <form method="post" asp-page="/Notifications/Clear" class="m-0">
                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -38,21 +38,26 @@
             </form>
         </li>
 
-        @if (last.Count > 0)
-        {
-            @foreach (var n in last)
+        <li class="notifications-list">
+            @if (last.Count > 0)
             {
-                <li class="px-2 py-2 small border-bottom">
-                    @n.Message
-                    <div class="text-muted" style="font-size: 0.75rem;">
-                        @n.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                @foreach (var n in last)
+                {
+                    <div class="px-3 py-2 small border-bottom">
+                        @n.Message
+                        <div class="text-muted" style="font-size: 0.75rem;">
+                            @n.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                        </div>
                     </div>
-                </li>
+                }
             }
-        }
-        else
-        {
-            <li class="px-2 py-3 small text-muted">No notifications yet.</li>
-        }
+            else
+            {
+                <div class="px-3 py-3 small text-muted">
+                    No notifications yet.
+                </div>
+            }
+        </li>
     </ul>
+
 </li>

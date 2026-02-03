@@ -192,20 +192,31 @@ a {
     border: 1px solid var(--fq-border);
 }
 
-/* =========================
-   Dropdown Notifications
-   ========================= */
 .notifications-dropdown {
-    width: 320px;
+    width: 340px;
+    max-height: 360px;
+    padding: 0;
+}
+
+.notifications-list {
     max-height: 300px;
     overflow-y: auto;
 }
 
-    /* Optional: un pic mai “premium” la item-uri */
-    .notifications-dropdown .dropdown-item {
-        white-space: normal;
-        line-height: 1.2;
+    /* Scrollbar discret (optional, modern look) */
+    .notifications-list::-webkit-scrollbar {
+        width: 6px;
     }
+
+    .notifications-list::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,.25);
+        border-radius: 4px;
+    }
+
+    .notifications-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
 
 /* =========================
    Small helpers
