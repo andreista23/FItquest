@@ -1,0 +1,98 @@
+﻿:root {
+    --fq-bg: #0f141a;
+    --fq-card: #ffffff;
+    --fq-text: #111827;
+    --fq-muted: #6b7280;
+    --fq-nav: #1f2937; /* gri închis */
+    --fq-accent: #f4b400; /* galben */
+    --fq-accent-hover: #d89f00;
+    --fq-success: #22c55e; /* verde */
+    --fq-outline: rgba(0,0,0,.08);
+}
+
+.login-page {
+    min-height: calc(100vh - 64px); /* dacă navbar-ul tău are ~64px */
+    padding: 48px 0;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(244,180,0,.18), transparent 60%), radial-gradient(900px 500px at 90% 20%, rgba(34,197,94,.12), transparent 55%), linear-gradient(180deg, #f7f8fb, #eef2f7);
+}
+
+.login-card {
+    border-radius: 18px;
+    background: var(--fq-card);
+}
+
+.login-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(244,180,0,.16);
+    border: 1px solid rgba(244,180,0,.25);
+}
+
+.login-badge-icon {
+    font-size: 26px;
+}
+
+.form-control {
+    border: 1px solid var(--fq-outline);
+    border-radius: 14px;
+}
+
+    .form-control:focus {
+        border-color: rgba(244,180,0,.65);
+        box-shadow: 0 0 0 .25rem rgba(244,180,0,.18);
+    }
+/* ===== LOGIN PRIMARY (GALBEN) ===== */
+.btn-accent {
+    background-color: var(--fq-accent) !important;
+    border-color: var(--fq-accent) !important;
+    color: #111 !important;
+}
+
+    .btn-accent:hover,
+    .btn-accent:focus {
+        background-color: var(--fq-accent-hover) !important;
+        border-color: var(--fq-accent-hover) !important;
+        color: #111 !important;
+    }
+
+/* ===== GOOGLE / SECONDARY ===== */
+.btn-google {
+    background-color: #1f2937 !important; /* gri închis */
+    border-color: #1f2937 !important;
+    color: #ffffff !important;
+}
+
+    .btn-google:hover,
+    .btn-google:focus {
+        background-color: #111827 !important;
+        border-color: #111827 !important;
+        color: #ffffff !important;
+    }
+
+
+.divider {
+    position: relative;
+    text-align: center;
+}
+
+    .divider::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        background: rgba(0,0,0,.10);
+    }
+
+    .divider span {
+        position: relative;
+        background: #fff;
+        padding: 0 12px;
+        color: var(--fq-muted);
+        font-size: .9rem;
+    }

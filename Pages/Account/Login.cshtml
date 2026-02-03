@@ -5,46 +5,83 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+<div class="login-page d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-7 col-lg-5">
 
-                <h3 class="text-center mb-4">Login</h3>
+                <div class="card login-card shadow-lg border-0">
+                    <div class="card-body p-4 p-md-5">
 
-                @if (Model.ErrorMessage != null)
-                {
-                    <div class="alert alert-danger">@Model.ErrorMessage</div>
-                }
+                        <div class="text-center mb-4">
+                            <div class="login-badge mx-auto mb-3">
+                                <span class="login-badge-icon">🏋️</span>
+                            </div>
+                            <h3 class="fw-bold mb-1">Welcome back</h3>
+                            <div class="text-muted">Log in to continue your FitQuest</div>
+                        </div>
 
-                <form method="post">
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <input asp-for="Input.Email" class="form-control" />
+                        @if (Model.ErrorMessage != null)
+                        {
+                            <div class="alert alert-danger small mb-3">
+                                @Model.ErrorMessage
+                            </div>
+                        }
+
+                        <form method="post" class="needs-validation" novalidate>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input asp-for="Input.Email"
+                                       class="form-control form-control-lg"
+                                       placeholder="name@example.com"
+                                       autocomplete="email" />
+                                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input asp-for="Input.Password"
+                                       type="password"
+                                       class="form-control form-control-lg"
+                                       placeholder="••••••••"
+                                       autocomplete="current-password" />
+                                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                            </div>
+
+                            <button class="btn btn-accent w-100 btn-lg fw-semibold">
+                                Login
+                            </button>
+                        </form>
+
+                        <div class="divider my-4">
+                            <span>or</span>
+                        </div>
+
+                        <a class="btn btn-google w-100 btn-lg fw-semibold"
+                           asp-page="/Account/ExternalLogin"
+                           asp-route-provider="Google">
+                            <span class="me-2">G</span> Continue with Google
+                        </a>
+
+                        <div class="text-center mt-4">
+                            <a class="link-secondary small" asp-page="/Account/Register">
+                                Don’t have an account? Create one
+                            </a>
+                        </div>
+
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label>Password</label>
-                        <input asp-for="Input.Password" type="password" class="form-control" />
-                    </div>
-
-                    <button class="btn btn-primary w-100">
-                        Login
-                    </button>
-                </form>
-
-                <hr />
-
-                <a class="btn btn-danger w-100"
-                   asp-page="/Account/ExternalLogin"
-                   asp-route-provider="Google">
-                    Login with Google
-                </a>
+                <div class="text-center mt-3 small text-muted">
+                    © 2025 FitQuest
+                </div>
 
             </div>
         </div>
-
     </div>
 </div>
 
