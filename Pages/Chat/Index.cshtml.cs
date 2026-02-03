@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FitQuest.Pages.Chat
 {
@@ -17,59 +18,78 @@ namespace FitQuest.Pages.Chat
             _db = db;
         }
 
-        // ====== DATA ======
         public List<ChatMessage> Messages { get; set; } = new();
         public List<User> ChatUsers { get; set; } = new();
 
         [BindProperty]
         public string NewMessage { get; set; } = string.Empty;
 
-        public int TrainerProfileId { get; private set; }
+        public int? TrainerProfileId { get; private set; }
         public int UserId { get; private set; }
         public bool IsTrainer { get; private set; }
+
+        // userId = client selectat (doar pt trainer)
         public int? SelectedUserId { get; private set; }
 
-        // ====== GET ======
+        public string? InfoMessage { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? userId)
         {
-            await LoadContextAsync();
+            await LoadContextAsync(userId);
 
-            if (IsTrainer)
+            if (!IsTrainer && TrainerProfileId == null)
             {
-                await LoadTrainerUsersAsync();
-
-                SelectedUserId = userId ?? ChatUsers.FirstOrDefault()?.Id;
-                UserId = SelectedUserId ?? 0;
+                InfoMessage = "Trebuie să fii abonat la un antrenor ca să folosești chatul.";
+                return Page();
             }
+
+
+            if (TrainerProfileId == 0 || UserId == 0)
+                return Page();
 
             await LoadMessagesAsync();
             return Page();
         }
 
-        // ====== POST (send message) ======
         public async Task<IActionResult> OnPostAsync(int? userId)
         {
-            await LoadContextAsync();
+            if (string.IsNullOrWhiteSpace(NewMessage))
+                return RedirectToPage(new { userId });
 
-            if (IsTrainer)
-                UserId = userId ?? UserId;
+            await LoadContextAsync(userId);
 
             if (TrainerProfileId == 0 || UserId == 0)
                 return RedirectToPage();
 
-            // 1️⃣ Save message
+            if (TrainerProfileId == null)
+                return Forbid();
+
+            bool allowed = await IsAllowedConversationAsync(
+                TrainerProfileId.Value,
+                UserId
+            );
+
+            if (!allowed)
+                return Forbid();
+
+            if (!IsTrainer && TrainerProfileId == null)
+            {
+                TempData["ChatInfo"] = "Trebuie să fii abonat la un antrenor ca să folosești chatul.";
+                return RedirectToPage();
+            }
+
+
             _db.ChatMessages.Add(new ChatMessage
             {
-                TrainerProfileId = TrainerProfileId,
+                TrainerProfileId = TrainerProfileId.Value,
                 UserId = UserId,
-                Message = NewMessage,
+                Message = NewMessage.Trim(),
                 SentByTrainer = IsTrainer,
                 SentAt = DateTime.UtcNow
             });
 
-            // 2️⃣ Notification
+            // notificare către partea cealaltă
             int targetUserId;
-
             if (IsTrainer)
             {
                 targetUserId = UserId; // trainer -> user
@@ -79,7 +99,7 @@ namespace FitQuest.Pages.Chat
                 targetUserId = await _db.TrainerProfiles
                     .Where(t => t.Id == TrainerProfileId)
                     .Select(t => t.UserId)
-                    .FirstAsync(); // user -> trainer
+                    .FirstAsync(); // user -> trainer(userId)
             }
 
             _db.Notifications.Add(new Notification
@@ -92,52 +112,70 @@ namespace FitQuest.Pages.Chat
 
             await _db.SaveChangesAsync();
 
-            return RedirectToPage(new { userId = UserId });
+            return RedirectToPage(new { userId = IsTrainer ? UserId : (int?)null });
         }
 
-        // ====== CONTEXT ======
-        private async Task LoadContextAsync()
+        private async Task LoadContextAsync(int? userIdFromRoute)
         {
             IsTrainer = User.IsInRole("Trainer");
+            int currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            var lastChat = await _db.ChatMessages
-                .OrderByDescending(m => m.SentAt)
+            if (IsTrainer)
+            {
+                // trainer logat -> TrainerProfileId al lui
+                TrainerProfileId = await _db.TrainerProfiles
+                    .Where(tp => tp.UserId == currentUserId)
+                    .Select(tp => tp.Id)
+                    .FirstOrDefaultAsync();
+
+                if (TrainerProfileId == 0)
+                {
+                    UserId = 0;
+                    return;
+                }
+
+                // lista clienților lui (doar abonamente active)
+                ChatUsers = await _db.Subscriptions
+                    .Include(s => s.User)
+                    .Where(s => s.TrainerId == TrainerProfileId && s.Status == "active")
+                    .Select(s => s.User)
+                    .Distinct()
+                    .OrderBy(u => u.Name)
+                    .ToListAsync();
+
+                SelectedUserId = userIdFromRoute ?? ChatUsers.FirstOrDefault()?.Id;
+                UserId = SelectedUserId ?? 0;
+                return;
+            }
+
+            // user normal -> trainer din abonamentul lui activ
+            TrainerProfileId = await _db.Subscriptions
+                .Where(s => s.UserId == currentUserId
+                            && s.Status == "active"
+                            && s.TrainerId != null)
+                .OrderByDescending(s => s.Id) // sau CreatedAt dacă ai
+                .Select(s => s.TrainerId)
                 .FirstOrDefaultAsync();
 
-            if (lastChat == null)
-            {
-                TrainerProfileId = 0;
-                UserId = 0;
-                return;
-            }
 
-            TrainerProfileId = lastChat.TrainerProfileId;
-            UserId = lastChat.UserId;
+            UserId = currentUserId;
         }
 
-        // ====== LOAD MESSAGES ======
         private async Task LoadMessagesAsync()
         {
-            if (TrainerProfileId == 0 || UserId == 0)
-            {
-                Messages = new();
-                return;
-            }
-
             Messages = await _db.ChatMessages
-                .Where(m => m.TrainerProfileId == TrainerProfileId &&
-                            m.UserId == UserId)
+                .Where(m => m.TrainerProfileId == TrainerProfileId && m.UserId == UserId)
                 .OrderBy(m => m.SentAt)
                 .ToListAsync();
         }
 
-        // ====== TRAINER USERS ======
-        private async Task LoadTrainerUsersAsync()
+        private async Task<bool> IsAllowedConversationAsync(int trainerProfileId, int userId)
         {
-            ChatUsers = await _db.Subscriptions
-                .Where(s => s.TrainerId == TrainerProfileId && s.Status == "active")
-                .Select(s => s.User)
-                .ToListAsync();
+            // verificăm că există abonament activ user->trainer
+            return await _db.Subscriptions.AnyAsync(s =>
+                s.TrainerId == trainerProfileId &&
+                s.UserId == userId &&
+                s.Status == "active");
         }
     }
 }

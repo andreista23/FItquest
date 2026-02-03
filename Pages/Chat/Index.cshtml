@@ -3,68 +3,88 @@
 
 <h2 class="mb-3">💬 Chat cu antrenorul</h2>
 
+@if (TempData["ChatInfo"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["ChatInfo"]
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.InfoMessage))
+{
+    <div class="alert alert-warning">
+        @Model.InfoMessage
+    </div>
+
+    <div class="mt-2">
+        <a class="btn btn-primary" asp-page="/Premium/ChooseTrainer">
+            ➕ Alege un antrenor
+        </a>
+    </div>
+
+    @* oprim restul paginii *@
+    return;
+}
+
+
 @if (Model.TrainerProfileId == 0 && !User.IsInRole("Trainer"))
 {
     <div class="alert alert-warning">
         ❗ Nu ai încă un antrenor ales.
         <br />
-        Mergi la <a asp-page="/Premium/ChooseTrainer">Alege antrenor</a> pentru a putea folosi chat-ul.
+        Mergi la <a asp-page="/Premium/ChooseTrainer">Alege antrenor</a>.
     </div>
 }
-
-<div class="border rounded p-3 mb-3" style="height:400px; overflow-y:auto;">
-    @foreach (var m in Model.Messages)
-    {
-        <div class="mb-2 text-@(m.SentByTrainer ? "start" : "end")">
-            <span class="badge bg-@(m.SentByTrainer ? "primary" : "secondary")">
-                @(m.SentByTrainer ? "Trainer" : "Tu")
-            </span>
-            <div class="mt-1">
-                @m.Message
-            </div>
-            <small class="text-muted">
-                @m.SentAt.ToLocalTime()
-            </small>
-        </div>
-    }
-</div>
-
-<form method="post">
-    <div class="input-group">
-        <input asp-for="NewMessage"
-               class="form-control"
-               placeholder="Scrie un mesaj..." />
-        <button class="btn btn-primary">
-            Trimite
-        </button>
+else if (User.IsInRole("Trainer") && Model.UserId == 0)
+{
+    <div class="alert alert-info">
+        Nu ai conversații active (nu există abonați).
     </div>
-</form>
+}
+else
+{
+    <div class="row">
+        <div class="@(User.IsInRole("Trainer") ? "col-9" : "col-12")">
 
-<div class="row">
-    <div class="col-9">
-        <!-- CHAT -->
-        @foreach (var m in Model.Messages)
+            <div class="border rounded p-3 mb-3" style="height:400px; overflow-y:auto;">
+                @foreach (var m in Model.Messages)
+                {
+                    <div class="mb-2 text-@(m.SentByTrainer ? "start" : "end")">
+                        <span class="badge bg-@(m.SentByTrainer ? "primary" : "secondary")">
+                            @(m.SentByTrainer ? "Trainer" : "Tu")
+                        </span>
+                        <div class="mt-1">@m.Message</div>
+                        <small class="text-muted">@m.SentAt.ToLocalTime()</small>
+                    </div>
+                }
+            </div>
+
+            <form method="post">
+                @if (User.IsInRole("Trainer"))
+                {
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                }
+
+                <div class="input-group">
+                    <input asp-for="NewMessage" class="form-control" placeholder="Scrie un mesaj..." />
+                    <button class="btn btn-primary">Trimite</button>
+                </div>
+            </form>
+        </div>
+
+        @if (User.IsInRole("Trainer"))
         {
-            <div class="mb-2">
-                <b>@(m.SentByTrainer ? "Trainer" : "User")</b>:
-                @m.Message
+            <div class="col-3 border-start">
+                <h6>Conversații</h6>
+                @foreach (var u in Model.ChatUsers)
+                {
+                    <a asp-page="/Chat/Index"
+                       asp-route-userId="@u.Id"
+                       class="d-block mb-2 @(u.Id == Model.UserId ? "fw-bold" : "")">
+                        👤 @u.Name
+                    </a>
+                }
             </div>
         }
     </div>
-
-    @if (User.IsInRole("Trainer"))
-    {
-        <div class="col-3 border-start">
-            <h6>Conversații</h6>
-            @foreach (var u in Model.ChatUsers)
-            {
-                <a asp-page="/Chat/Index"
-                   asp-route-userId="@u.Id"
-                   class="d-block mb-2 @(u.Id == Model.UserId ? "fw-bold" : "")">
-                    👤 @u.Name
-                </a>
-            }
-        </div>
-    }
-</div>
-
+}
