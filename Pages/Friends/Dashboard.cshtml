@@ -1,0 +1,100 @@
+﻿@page
+@model FitQuest.Pages.Friends.DashboardModel
+@{
+    ViewData["Title"] = "Friend Dashboard";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">👥 Dashboard: @Model.ViewedUserName</h2>
+        <p class="text-muted mb-0">Vizibil doar pentru prieteni</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="/Friends/Index">Înapoi</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">XP Total</h5>
+                <p class="display-6 fw-bold text-primary">@Model.TotalXP</p>
+
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         style="width:@Model.LevelProgressPercent%">
+                    </div>
+                </div>
+                <small class="text-muted">Progres nivel</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Level</h5>
+                <p class="display-6 fw-bold">@Model.Level</p>
+                <p class="text-muted">Se calculează la fiecare 100 XP</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Activități</h5>
+                <div class="fw-semibold">Total: @Model.TotalActivities</div>
+                <div class="text-muted">Ultimele 7 zile: @Model.LastWeekActivities</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-4">🏅 Insigne</h4>
+
+@if (!Model.MyBadges.Any())
+{
+    <p class="text-muted">Nu are încă insigne.</p>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        @foreach (var badge in Model.MyBadges)
+        {
+            <div class="col-6 col-md-3 col-lg-2">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <img src="@badge.ImagePath"
+                             alt="@badge.Title"
+                             class="img-fluid mb-2"
+                             style="max-height:80px;" />
+                        <div class="fw-semibold">@badge.Title</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<h4 class="mt-4">🕒 Activități recente</h4>
+
+@if (!Model.RecentActivities.Any())
+{
+    <p class="text-muted">Nu are activități recente.</p>
+}
+else
+{
+    <div class="list-group mb-4">
+        @foreach (var a in Model.RecentActivities)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Activitate</strong>
+                    <div class="text-muted small">
+                        @a.Date.ToLocalTime()
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

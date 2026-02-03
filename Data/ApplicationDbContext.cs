@@ -31,6 +31,7 @@ namespace FitQuest.Data
         public DbSet<AdminAccessCode> AdminAccessCodes { get; set; }
         public DbSet<FitnessPlanAssignment> FitnessPlanAssignments { get; set; }
         public DbSet<UserLoginDay> UserLoginDays { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
 
 
 
@@ -39,6 +40,10 @@ namespace FitQuest.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Friendship>()
+                .HasIndex(f => new { f.RequesterId, f.AddresseeId })
+                .IsUnique();
 
             modelBuilder.Entity<UserBadge>()
             .HasKey(ub => new { ub.UserId, ub.BadgeId });

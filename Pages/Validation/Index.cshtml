@@ -5,16 +5,36 @@
     ViewData["Title"] = "Validation";
 }
 
-<h2 class="mb-3">Video validation</h2>
+<h2 class="mb-3">🎥 Video validation</h2>
 
 @if (!string.IsNullOrEmpty(Model.Message))
 {
     <div class="alert alert-success">@Model.Message</div>
 }
 
+<!-- ✅ TABS: Global vs Subscribers -->
+<div class="mb-3 d-flex gap-2">
+    <a class="btn @(Model.Scope == "global" ? "btn-primary" : "btn-outline-primary")"
+       asp-page="/Validation/Index"
+       asp-route-scope="global">
+        🌍 Global
+    </a>
+
+    @if (User.IsInRole("Trainer"))
+    {
+        <a class="btn @(Model.Scope == "subscribers" ? "btn-primary" : "btn-outline-primary")"
+           asp-page="/Validation/Index"
+           asp-route-scope="subscribers">
+            👥 Abonații mei
+        </a>
+    }
+</div>
+
 @if (Model.PendingActivities.Count == 0)
 {
-    <div class="alert alert-info">Nu există activități în așteptare cu video.</div>
+    <div class="alert alert-info">
+        Nu există activități în așteptare cu video pentru acest filtru.
+    </div>
 }
 else
 {
@@ -27,7 +47,7 @@ else
                     <th>Duration</th>
                     <th>Date</th>
                     <th>Evidence</th>
-                    <th>Actions</th>
+                    <th style="width:200px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,6 +64,7 @@ else
                         <td>@a.Type</td>
                         <td>@a.Duration min</td>
                         <td>@a.Date.ToLocalTime().ToString("yyyy-MM-dd")</td>
+
                         <td>
                             @if (ev != null)
                             {
@@ -53,7 +74,9 @@ else
                                 }
                                 else
                                 {
-                                    <a class="btn btn-sm btn-outline-primary" href="@ev.FilePath" target="_blank">
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="@ev.FilePath"
+                                       target="_blank">
                                         View video
                                     </a>
                                 }
@@ -64,22 +87,29 @@ else
                             }
                         </td>
 
-                        <td class="d-flex gap-2">
-                            <form method="post" asp-page-handler="Approve">
-                                <input type="hidden" name="activityId" value="@a.Id" />
-                                <button class="btn btn-sm btn-success" type="submit" disabled="@(isExpired ? "disabled" : null)">
-                                    Approve
-                                </button>
-                            </form>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <form method="post" asp-page-handler="Approve">
+                                    <input type="hidden" name="activityId" value="@a.Id" />
+                                    <input type="hidden" name="Scope" value="@Model.Scope" />
+                                    <button class="btn btn-sm btn-success"
+                                            type="submit"
+                                            disabled="@(isExpired ? "disabled" : null)">
+                                        Approve
+                                    </button>
+                                </form>
 
-                            <form method="post" asp-page-handler="Reject">
-                                <input type="hidden" name="activityId" value="@a.Id" />
-                                <button class="btn btn-sm btn-danger" type="submit" disabled="@(isExpired ? "disabled" : null)">
-                                    Reject
-                                </button>
-                            </form>
+                                <form method="post" asp-page-handler="Reject">
+                                    <input type="hidden" name="activityId" value="@a.Id" />
+                                    <input type="hidden" name="Scope" value="@Model.Scope" />
+                                    <button class="btn btn-sm btn-danger"
+                                            type="submit"
+                                            disabled="@(isExpired ? "disabled" : null)">
+                                        Reject
+                                    </button>
+                                </form>
+                            </div>
                         </td>
-
                     </tr>
                 }
             </tbody>
