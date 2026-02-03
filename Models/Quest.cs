@@ -16,7 +16,8 @@ namespace FitQuest.Models
 
         // "daily", "weekly", "lifetime" etc.
         [MaxLength(50)]
-        public string Period { get; set; } = "lifetime";
+        public QuestPeriod Period { get; set; } = QuestPeriod.Lifetime;
+
 
         // ✅ nou
         public QuestType Type { get; set; }

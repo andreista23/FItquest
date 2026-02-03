@@ -27,6 +27,7 @@ else
                     <th>Reward XP</th>
                     <th>Period</th>
                     <th>Active</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,7 +39,7 @@ else
                         <td>@q.Type</td>
                         <td>@q.Target</td>
                         <td>@q.RewardXP</td>
-                        <td>@(q.Period ?? "—")</td>
+                        <td>@q.Period</td>
                         <td>
                             @if (q.IsActive)
                             {
@@ -49,6 +50,24 @@ else
                                 <span class="badge bg-secondary">Inactive</span>
                             }
                         </td>
+                        <td>
+                            @if (q.IsActive)
+                            {
+                                <form method="post" asp-page-handler="Deactivate" class="d-inline">
+                                    <input type="hidden" name="id" value="@q.Id" />
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Deactivate this quest?')">
+                                        🚫 Deactivate
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+
                     </tr>
                 }
             </tbody>

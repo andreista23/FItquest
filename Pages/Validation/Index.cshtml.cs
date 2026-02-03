@@ -132,11 +132,12 @@ public class IndexModel : PageModel
             }
 
             await _db.SaveChangesAsync();
+            await _questService.OnActivityApprovedAsync(activity.UserId, activity.Duration);
             await _levelUpService.CheckAndNotifyAsync(activity.UserId);
 
             DeleteEvidenceFiles(activity);
 
-            await _questService.OnActivityApprovedAsync(activity.UserId, activity.Duration);
+            
 
 
             Message = $"Activity #{activity.Id} approved (+{activity.FullXp} XP).";

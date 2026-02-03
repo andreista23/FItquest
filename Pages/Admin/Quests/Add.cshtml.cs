@@ -1,4 +1,4 @@
-using FitQuest.Data;
+﻿using FitQuest.Data;
 using FitQuest.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,17 +31,18 @@ namespace FitQuest.Pages.Admin.Quests
             [Range(0, 100000)]
             public int RewardXP { get; set; }
 
-            [MaxLength(100)]
-            public string? Period { get; set; }
-
             [Required]
             public QuestType Type { get; set; }
 
             [Range(1, 100000)]
             public int Target { get; set; }
 
+            // ✅ enum, nu string
+            public QuestPeriod Period { get; set; } = QuestPeriod.Lifetime;
+
             public bool IsActive { get; set; } = true;
         }
+
 
         public void OnGet() { }
 

@@ -90,6 +90,10 @@ builder.Services
                     await db.SaveChangesAsync();
                 }
 
+                var questService = context.HttpContext.RequestServices
+                .GetRequiredService<FitQuest.Services.QuestService>();
+
+                await questService.OnUserLoggedInAsync(user.Id);
                 var identity = (ClaimsIdentity)context.Principal!.Identity!;
 
                 var existingNameId = identity.FindFirst(ClaimTypes.NameIdentifier);
