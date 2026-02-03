@@ -3,6 +3,7 @@ using System;
 using FitQuest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitquest.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260202172725_AddFitnessPlanAssignments")]
+    partial class AddFitnessPlanAssignments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -412,26 +415,17 @@ namespace Fitquest.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("Period")
-                        .HasMaxLength(50)
-                        .HasColumnType("int");
+                    b.Property<string>("Period")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("RewardXP")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Target")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -642,23 +636,6 @@ namespace Fitquest.Migrations
                     b.ToTable("UserBadges");
                 });
 
-            modelBuilder.Entity("FitQuest.Models.UserLoginDay", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DayUtc")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserLoginDays");
-                });
-
             modelBuilder.Entity("FitQuest.Models.UserQuest", b =>
                 {
                     b.Property<int>("UserId")
@@ -667,19 +644,13 @@ namespace Fitquest.Migrations
                     b.Property<int>("QuestId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AssignedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<int>("Progress")
                         .HasColumnType("int");
 
                     b.Property<string>("State")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("UserId", "QuestId");
 
@@ -971,7 +942,7 @@ namespace Fitquest.Migrations
             modelBuilder.Entity("FitQuest.Models.UserQuest", b =>
                 {
                     b.HasOne("FitQuest.Models.Quest", "Quest")
-                        .WithMany()
+                        .WithMany("UserQuests")
                         .HasForeignKey("QuestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1047,6 +1018,11 @@ namespace Fitquest.Migrations
             modelBuilder.Entity("FitQuest.Models.FitnessPlan", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("FitQuest.Models.Quest", b =>
+                {
+                    b.Navigation("UserQuests");
                 });
 
             modelBuilder.Entity("FitQuest.Models.TrainerProfile", b =>

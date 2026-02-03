@@ -29,6 +29,7 @@ namespace FitQuest.Data
         public DbSet<TrainerFeedback> TrainerFeedbacks { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<AdminAccessCode> AdminAccessCodes { get; set; }
+        public DbSet<FitnessPlanAssignment> FitnessPlanAssignments { get; set; }
         public DbSet<UserLoginDay> UserLoginDays { get; set; }
 
 

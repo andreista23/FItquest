@@ -25,6 +25,7 @@ namespace FitQuest.Pages.Activities
 
             Activities = await _db.TrainerActivityAssignments
                 .Include(a => a.TrainerActivity)
+                .ThenInclude(t => t.TrainerProfile)
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
         }

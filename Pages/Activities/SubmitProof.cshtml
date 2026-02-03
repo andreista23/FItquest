@@ -1,0 +1,34 @@
+﻿@page
+@model FitQuest.Pages.Activities.SubmitProofModel
+
+@{
+    ViewData["Title"] = "Trimite dovadă";
+}
+
+<h2 class="mb-4">📤 Trimite dovadă</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h5 class="mb-2">@Model.Assignment?.TrainerActivity.Title</h5>
+        <p class="text-muted">@Model.Assignment?.TrainerActivity.Description</p>
+
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="AssignmentId" />
+
+            <div class="mb-3">
+                <label class="form-label">Dovadă (poză / PDF)</label>
+                <input type="file" class="form-control" asp-for="ProofFile" />
+                <div class="form-text">Poți trimite și doar mesaj dacă nu încarci fișier.</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mesaj (opțional)</label>
+                <textarea class="form-control" asp-for="ProofMessage" rows="3"
+                          placeholder="Ex: am alergat 5km, atașez screenshot..."></textarea>
+            </div>
+
+            <button class="btn btn-success">✅ Trimite dovada</button>
+            <a asp-page="/Activities/FromTrainer" class="btn btn-outline-secondary ms-2">Renunță</a>
+        </form>
+    </div>
+</div>

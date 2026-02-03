@@ -1,0 +1,35 @@
+﻿@page
+@model FitQuest.Pages.Activities.MyAssignedPlansModel
+
+<h2 class="mb-4">📚 Planuri de fitness de la antrenor</h2>
+
+@if (!Model.AssignedPlans.Any())
+{
+    <div class="alert alert-info">Nu ai planuri asignate încă.</div>
+}
+else
+{
+    @foreach (var ap in Model.AssignedPlans)
+    {
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4 class="mb-1">@ap.FitnessPlan.Title</h4>
+                <p class="text-muted">@ap.FitnessPlan.Description</p>
+
+                <div class="small text-muted mb-2">
+                    Asignat la: @ap.AssignedAt.ToLocalTime()
+                </div>
+
+                @if (ap.FitnessPlan.Items != null && ap.FitnessPlan.Items.Any())
+                {
+                    <ol class="mb-0">
+                        @foreach (var item in ap.FitnessPlan.Items.OrderBy(i => i.Order))
+                        {
+                            <li>@item.TrainerActivity?.Title</li>
+                        }
+                    </ol>
+                }
+            </div>
+        </div>
+    }
+}
