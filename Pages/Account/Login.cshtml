@@ -21,8 +21,8 @@
                             <div class="login-badge mx-auto mb-3">
                                 <span class="login-badge-icon">🏋️</span>
                             </div>
-                            <h3 class="fw-bold mb-1">Welcome back</h3>
-                            <div class="text-muted">Log in to continue your FitQuest</div>
+                            <h3 class="fw-bold mb-1">Bine ai revenit</h3>
+                            <div class="text-muted">Logheaza-te ca sa continui in FitQuest</div>
                         </div>
 
                         @if (Model.ErrorMessage != null)
@@ -43,7 +43,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Password</label>
+                                <label class="form-label">Parola</label>
                                 <input asp-for="Input.Password"
                                        type="password"
                                        class="form-control form-control-lg"
@@ -64,12 +64,12 @@
                         <a class="btn btn-google w-100 btn-lg fw-semibold"
                            asp-page="/Account/ExternalLogin"
                            asp-route-provider="Google">
-                            <span class="me-2">G</span> Continue with Google
+                            <span class="me-2">G</span> Continua cu Google
                         </a>
 
                         <div class="text-center mt-4">
                             <a class="link-secondary small" asp-page="/Account/Register">
-                                Don’t have an account? Create one
+                                Nu ai cont? Creaza unul!
                             </a>
                         </div>
 

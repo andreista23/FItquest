@@ -21,8 +21,8 @@
                             <div class="login-badge mx-auto mb-3">
                                 <span class="login-badge-icon">✨</span>
                             </div>
-                            <h3 class="fw-bold mb-1">Create account</h3>
-                            <div class="text-muted">Start your FitQuest journey</div>
+                            <h3 class="fw-bold mb-1">Creaza cont</h3>
+                            <div class="text-muted">Incepe calatoria FitQuest</div>
                         </div>
 
                         @if (Model.ErrorMessage != null)
@@ -53,7 +53,7 @@
 
                             <div class="row g-3">
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label">Password</label>
+                                    <label class="form-label">Parola</label>
                                     <input asp-for="Input.Password"
                                            type="password"
                                            class="form-control form-control-lg"
@@ -63,7 +63,7 @@
                                 </div>
 
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label">Confirm password</label>
+                                    <label class="form-label">Confirma parola</label>
                                     <input asp-for="Input.ConfirmPassword"
                                            type="password"
                                            class="form-control form-control-lg"
@@ -74,13 +74,13 @@
                             </div>
 
                             <button class="btn btn-accent w-100 btn-lg fw-semibold mt-4">
-                                Register
+                                Inregistrare
                             </button>
                         </form>
 
                         <div class="text-center mt-4">
                             <a class="link-secondary small" asp-page="/Account/Login">
-                                Already have an account? Login here
+                                Ai deja cont? Logheaza-te aici!
                             </a>
                         </div>
 
@@ -90,7 +90,7 @@
 
                         <a class="btn btn-success-fq w-100 btn-lg fw-semibold"
                            asp-page="/Trainer/Register">
-                            🧑‍🏫 Register as trainer
+                            🧑‍🏫 Inregistreaza-te ca antrenor
                         </a>
 
                     </div>

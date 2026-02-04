@@ -147,7 +147,9 @@
                                     <p class="text-muted mb-2">@sp.Description</p>
                                 </div>
                                 <div class="text-end">
-                                    <div><strong>@sp.Price €</strong></div>
+                                    <div>
+                                        <strong>@sp.Price.ToString("0.00") €</strong>
+                                    </div>
                                     <div class="text-muted">@sp.DurationDays zile</div>
                                 </div>
                             </div>

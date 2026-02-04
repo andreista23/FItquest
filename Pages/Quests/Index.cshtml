@@ -84,7 +84,6 @@ else
             <thead>
                 <tr>
                     <th>Quest</th>
-                    <th>Type</th>
                     <th>Reward</th>
                     <th>Completed</th>
                 </tr>
@@ -94,7 +93,6 @@ else
                 {
                     <tr>
                         <td>@uq.Quest.Title</td>
-                        <td>@uq.Quest.Type</td>
                         <td>@uq.Quest.RewardXP XP</td>
                         <td>@(uq.CompletedAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
                     </tr>
